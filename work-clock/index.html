@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="description" content="一个极简、离线可用、只保存在本机的工作打卡 PWA。" />
+  <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0b0b0f" media="(prefers-color-scheme: dark)" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="工作打卡" />
+  <title>工作打卡</title>
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <noscript>
+    <div class="noscript">这个打卡应用需要启用 JavaScript 才能运行。</div>
+  </noscript>
+
+  <div class="app-shell">
+    <header class="topbar" aria-label="应用顶部信息">
+      <div>
+        <p class="eyebrow" id="connectionStatus">本地离线存储</p>
+        <h1>工作打卡</h1>
+      </div>
+      <div class="clock-pill" aria-live="polite">
+        <span id="currentTime">--:--</span>
+      </div>
+    </header>
+
+    <main>
+      <section class="card today-card" aria-labelledby="todayTitle">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">今天</p>
+            <h2 id="todayTitle">--</h2>
+          </div>
+          <span class="status-badge" id="todayStatus">待打卡</span>
+        </div>
+
+        <div class="summary-grid" aria-label="今日打卡摘要">
+          <div class="summary-item">
+            <span>上班</span>
+            <strong id="todayIn">--:--</strong>
+          </div>
+          <div class="summary-item">
+            <span>下班</span>
+            <strong id="todayOut">--:--</strong>
+          </div>
+          <div class="summary-item wide">
+            <span>今日工时</span>
+            <strong id="todayDuration">--</strong>
+          </div>
+        </div>
+
+        <div class="action-row">
+          <button class="primary-button" id="clockInButton" type="button">
+            <span class="button-icon">↗</span>
+            上班打卡
+          </button>
+          <button class="secondary-button" id="clockOutButton" type="button">
+            <span class="button-icon">↘</span>
+            下班打卡
+          </button>
+        </div>
+
+        <p class="hint" id="installHint">在 iPhone Safari 中点击“分享” → “添加到主屏幕”，即可像 App 一样使用。</p>
+      </section>
+
+      <section class="card history-card" aria-labelledby="historyTitle">
+        <div class="section-heading compact">
+          <div>
+            <p class="eyebrow">本机记录</p>
+            <h2 id="historyTitle">历史记录</h2>
+          </div>
+          <button class="text-button" id="exportButton" type="button">导出 CSV</button>
+        </div>
+        <div class="history-list" id="historyList" aria-live="polite"></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <div class="update-banner" id="updateBanner" hidden>
+    <span>发现新版本</span>
+    <button id="reloadButton" type="button">立即更新</button>
+  </div>
+
+  <script src="./script.js" defer></script>
+</body>
+</html>
