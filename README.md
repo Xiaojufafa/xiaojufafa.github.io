@@ -1,4 +1,4 @@
-# 工作打卡 PWA
+# 上班打卡 PWA
 
 一个极简的工作打卡网页 App，可以部署到 GitHub Pages，然后在 iPhone Safari 中添加到主屏幕使用。
 
