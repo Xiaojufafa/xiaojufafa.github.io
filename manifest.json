@@ -1,6 +1,6 @@
 {
-  "name": "工作打卡",
-  "short_name": "工作打卡",
+  "name": "上班打卡",
+  "short_name": "上班打卡",
   "description": "一个极简、离线可用、只保存在本机的工作打卡 PWA。",
   "start_url": "./index.html",
   "scope": "./",
