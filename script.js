@@ -204,18 +204,37 @@
 
     elements.historyList.innerHTML = visibleRecords.map((record) => {
       const duration = formatDuration(record.clockIn, record.clockOut);
+
       return `
         <article class="history-item">
           <div>
             <div class="history-date">${formatHistoryDate(record.date)}</div>
             <div class="history-meta">上班 ${formatTime(record.clockIn)} · 下班 ${formatTime(record.clockOut)}</div>
           </div>
-          <div class="history-duration">${duration}</div>
+
+          <div class="history-actions">
+            <div class="history-duration">${duration}</div>
+            <button class="delete-history-btn" data-date="${record.date}">删除</button>
+          </div>
         </article>
       `;
     }).join('');
   }
 
+  elements.historyList.addEventListener("click", (event) => {
+    const button = event.target.closest(".delete-history-btn");
+    if (!button) return;
+
+    const date = button.dataset.date;
+
+    if (!confirm("确定要删除这条打卡记录吗？")) return;
+
+    records = records.filter((record) => record.date !== date);
+    saveRecords();
+    renderHistory();
+    updateTodayView();
+  });
+  
   function renderInstallHint() {
     const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
     elements.installHint.hidden = standalone;

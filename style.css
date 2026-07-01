@@ -406,3 +406,23 @@ h2 {
     grid-template-columns: 1fr;
   }
 }
+
+.history-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.delete-history-btn {
+  border: none;
+  background: #fee2e2;
+  color: #dc2626;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.delete-history-btn:hover {
+  background: #fecaca;
+}
