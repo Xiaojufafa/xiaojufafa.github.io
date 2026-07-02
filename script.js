@@ -376,4 +376,33 @@
   setupServiceWorker();
 
   window.setInterval(updateClock, 1000);
+
+  let newWorker;
+
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./service-worker.js").then(reg => {
+      reg.addEventListener("updatefound", () => {
+        newWorker = reg.installing;
+
+        newWorker.addEventListener("statechange", () => {
+          if (
+            newWorker.state === "installed" &&
+            navigator.serviceWorker.controller
+          ) {
+            document.getElementById("updateNotice").classList.remove("hidden");
+          }
+        });
+      });
+    });
+  }
+
+  document.getElementById("updateBtn")?.addEventListener("click", () => {
+    if (newWorker) {
+      newWorker.postMessage({ type: "SKIP_WAITING" });
+    }
+  });
+
+  navigator.serviceWorker?.addEventListener("controllerchange", () => {
+    window.location.reload();
+  });
 })();

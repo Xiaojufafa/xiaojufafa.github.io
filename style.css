@@ -426,3 +426,7 @@ h2 {
 .delete-history-btn:hover {
   background: #fecaca;
 }
+
+.hidden {
+  display: none !important;
+}

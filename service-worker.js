@@ -68,3 +68,9 @@ async function networkFirst(request) {
     throw error;
   }
 }
+
+self.addEventListener("message", event => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
+});
