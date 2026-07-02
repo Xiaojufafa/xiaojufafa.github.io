@@ -1,10 +1,11 @@
-const CACHE_NAME = 'work-clock-cache-v1.0.0';
+const CACHE_NAME = 'work-clock-cache-v1.1.0';
 
 const APP_SHELL = [
   './',
   './index.html',
   './style.css',
   './script.js',
+  './cloud-config.js',
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png',
@@ -68,9 +69,3 @@ async function networkFirst(request) {
     throw error;
   }
 }
-
-self.addEventListener("message", event => {
-  if (event.data && event.data.type === "SKIP_WAITING") {
-    self.skipWaiting();
-  }
-});

@@ -177,6 +177,13 @@ h2 {
   margin-bottom: 12px;
 }
 
+.toolbar-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 .status-badge {
   padding: 7px 11px;
   color: var(--orange);
@@ -290,6 +297,83 @@ h2 {
   background: rgba(10, 132, 255, 0.1);
   font-size: 14px;
   font-weight: 720;
+}
+
+.danger-text-button {
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.1);
+}
+
+.cloud-sync {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(10, 132, 255, 0.06);
+}
+
+.cloud-sync-status {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 10px;
+}
+
+.cloud-dot {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--muted);
+}
+
+.cloud-dot.ready {
+  background: var(--green);
+}
+
+.cloud-dot.syncing {
+  background: var(--blue);
+  animation: pulse 900ms ease-in-out infinite;
+}
+
+.cloud-dot.offline,
+.cloud-dot.error {
+  background: var(--orange);
+}
+
+.cloud-title {
+  font-size: 14px;
+  font-weight: 760;
+}
+
+.cloud-meta {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.cloud-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 8px;
+}
+
+.cloud-input {
+  min-width: 0;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  color: var(--text);
+  background: var(--card-strong);
+  outline: none;
+}
+
+.cloud-input:focus {
+  border-color: rgba(10, 132, 255, 0.7);
 }
 
 .history-list {
@@ -429,4 +513,36 @@ h2 {
 
 .hidden {
   display: none !important;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.35);
+    opacity: 0.62;
+  }
+}
+
+@media (max-width: 460px) {
+  .section-heading.compact {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .toolbar-buttons {
+    justify-content: stretch;
+  }
+
+  .toolbar-buttons .text-button {
+    flex: 1;
+  }
+
+  .cloud-form {
+    grid-template-columns: 1fr;
+  }
 }

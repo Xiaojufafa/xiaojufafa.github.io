@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="description" content="一个极简、离线可用、只保存在本机的工作打卡 PWA。" />
+  <meta name="description" content="一个极简、离线可用、支持云端同步的工作打卡 PWA。" />
   <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)" />
   <meta name="theme-color" content="#0b0b0f" media="(prefers-color-scheme: dark)" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -73,11 +73,30 @@
       <section class="card history-card" aria-labelledby="historyTitle">
         <div class="section-heading compact">
           <div>
-            <p class="eyebrow">本机记录</p>
+            <p class="eyebrow">记录</p>
             <h2 id="historyTitle">历史记录</h2>
           </div>
-          <button class="text-button" id="exportButton" type="button">导出 CSV</button>
+          <div class="toolbar-buttons">
+            <button class="text-button" id="cloudSyncButton" type="button">同步云端</button>
+            <button class="text-button" id="exportButton" type="button">导出 CSV</button>
+          </div>
         </div>
+
+        <div class="cloud-sync" id="cloudSyncPanel">
+          <div class="cloud-sync-status">
+            <span class="cloud-dot" id="cloudDot" aria-hidden="true"></span>
+            <div>
+              <div class="cloud-title">云端同步</div>
+              <div class="cloud-meta" id="cloudStatus">未配置</div>
+            </div>
+          </div>
+          <div class="cloud-form">
+            <input class="cloud-input" id="cloudCodeInput" type="password" autocomplete="off" placeholder="同步码" aria-label="云端同步码" />
+            <button class="text-button" id="cloudConnectButton" type="button">连接</button>
+            <button class="text-button danger-text-button" id="cloudDisconnectButton" type="button" hidden>断开</button>
+          </div>
+        </div>
+
         <div class="history-list" id="historyList" aria-live="polite"></div>
       </section>
     </main>
@@ -89,11 +108,8 @@
     <span>发现新版本</span>
     <button id="reloadButton" type="button">立即更新</button>
   </div>
-  <div id="updateNotice" class="update-notice hidden">
-    <span>发现新版本</span>
-    <button id="updateBtn">立即更新</button>
-  </div>
   
+  <script src="./cloud-config.js" defer></script>
   <script src="./script.js" defer></script>
 </body>
 </html>

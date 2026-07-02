@@ -7,7 +7,8 @@
 - iPhone 原生风格界面
 - 上班打卡、下班打卡
 - 历史记录
-- 本地离线存储，不需要数据库
+- 默认本地离线存储
+- 可选加密云端同步
 - 支持离线访问
 - 支持添加到 iPhone 主屏幕
 - 支持深色模式
@@ -21,6 +22,7 @@ work-clock/
 ├── index.html
 ├── style.css
 ├── script.js
+├── cloud-config.js
 ├── manifest.json
 ├── service-worker.js
 ├── icons/
@@ -45,6 +47,51 @@ python3 -m http.server 8080
 ```text
 http://localhost:8080
 ```
+
+## 云端同步设置
+
+云端同步是可选功能。`cloud-config.js` 为空时，应用仍然只保存在本机。
+
+1. 在 Firebase 新建一个项目。
+2. 添加一个 Web App，并复制 Firebase 配置。
+3. 开启 Firestore Database。
+4. 把配置填入 `cloud-config.js`：
+
+```js
+window.WORK_CLOCK_CLOUD_CONFIG = {
+  firebase: {
+    apiKey: '你的 apiKey',
+    authDomain: '你的项目.firebaseapp.com',
+    projectId: '你的项目 ID',
+    appId: '你的 appId'
+  },
+  collectionName: 'workClockHistories'
+};
+```
+
+5. 在 Firestore Rules 中加入规则：
+
+```text
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /workClockHistories/{backupId} {
+      allow read: if true;
+      allow create, update: if
+        request.resource.data.app == 'work-clock' &&
+        request.resource.data.version == 1 &&
+        request.resource.data.encrypted.iv is string &&
+        request.resource.data.encrypted.data is string;
+      allow delete: if false;
+    }
+  }
+}
+```
+
+6. 重新部署后，在页面里输入至少 6 位同步码并点击“连接”。
+
+同一个同步码可以在不同设备之间同步记录。记录上传前会在浏览器里加密，建议使用不容易被猜到的同步码。
 
 ## 部署到 GitHub Pages
 
@@ -78,11 +125,10 @@ https://你的用户名.github.io/work-clock/
 
 所有打卡记录保存在当前设备浏览器的 `localStorage` 中。
 
-不会上传到服务器。
+如果配置了 Firebase 并连接同步码，记录会加密后同步到 Firestore。
 不会发送给 GitHub。
-不会跨设备自动同步。
 
-如果清除 Safari 网站数据、换手机、或删除浏览器本地数据，历史记录可能会丢失。建议需要备份时使用页面里的“导出 CSV”。
+如果没有启用云端同步，清除 Safari 网站数据、换手机、或删除浏览器本地数据，历史记录可能会丢失。建议需要备份时使用页面里的“导出 CSV”。
 
 ## 更新版本
 
