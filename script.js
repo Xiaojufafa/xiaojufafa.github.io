@@ -3,6 +3,8 @@
 
   const STORAGE_KEY = 'work-clock-records-v1';
   const CLOUD_SETTINGS_KEY = 'work-clock-cloud-settings-v1';
+  const LANGUAGE_KEY = 'work-clock-language-v1';
+  const DEFAULT_LANGUAGE = 'zh';
   const MAX_HISTORY_ITEMS = 60;
   const MAX_DELETED_ITEMS = 60;
   const CLOUD_CRYPTO_SALT = 'work-clock-cloud-sync-v1';
@@ -10,6 +12,164 @@
     'https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js',
     'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js'
   ];
+  const TRANSLATIONS = {
+    zh: {
+      htmlLang: 'zh-CN',
+      locale: 'zh-CN',
+      documentTitle: '上班打卡',
+      metaDescription: '一个极简、离线可用、支持云端同步的工作打卡 PWA。',
+      topbarAria: '应用顶部信息',
+      languageSwitchAria: '切换语言',
+      languageOptionChinese: '切换到中文',
+      languageOptionEnglish: '切换到英文',
+      appHeading: '李小弟上班啦！',
+      todayEyebrow: '今天',
+      summaryAria: '今日打卡摘要',
+      clockInLabel: '上班',
+      clockOutLabel: '下班',
+      durationLabel: '今日工时',
+      clockInButton: '上班打卡',
+      clockOutButton: '下班打卡',
+      installHint: '在 iPhone Safari 中点击“分享” → “添加到主屏幕”，即可像 App 一样使用。',
+      recordsEyebrow: '记录',
+      historyTitle: '历史记录',
+      cloudSyncButton: '同步云端',
+      exportButton: '导出 CSV',
+      cloudTitle: '云端同步',
+      syncCodePlaceholder: '同步码',
+      syncCodeAria: '云端同步码',
+      connectButton: '连接',
+      disconnectButton: '断开',
+      updateAvailable: '发现新版本',
+      reloadButton: '立即更新',
+      connectionOffline: '离线可用',
+      connectionCloudOn: '云端同步已开启',
+      connectionLocalCloudAvailable: '本地存储 · 可连接云端',
+      connectionLocalOnly: '本地离线存储',
+      cloudStatusNotConfigured: '未配置',
+      cloudNeedsConfig: '需要 cloud-config.js',
+      cloudOfflineLater: '离线，稍后同步',
+      cloudOffline: '离线',
+      cloudInputCode: '输入同步码连接',
+      cloudSyncing: '正在同步',
+      cloudLastSynced: '上次同步 {time}',
+      cloudWaitingFirstSync: '等待首次同步',
+      todayStatusDone: '今日已完成',
+      todayStatusWorking: '已上班',
+      todayStatusPending: '待打卡',
+      emptyHistory: '还没有打卡记录。<br>点击“上班打卡”开始记录第一天。',
+      historyMeta: '上班 {inTime} · 下班 {outTime}',
+      deleteButton: '删除',
+      durationZero: '0分钟',
+      durationMinutes: '{minutes}分钟',
+      durationHours: '{hours}小时',
+      durationHoursMinutes: '{hours}小时{minutes}分钟',
+      alreadyClockedIn: '今天已经上班打卡了',
+      clockInSuccess: '上班打卡成功：{time}',
+      clockInFirst: '请先完成上班打卡',
+      alreadyClockedOut: '今天已经下班打卡了',
+      clockOutSuccess: '下班打卡成功：{time}',
+      recordDeleted: '记录已删除',
+      csvDateHeader: '日期',
+      csvClockInHeader: '上班时间',
+      csvClockOutHeader: '下班时间',
+      csvDurationHeader: '工时',
+      csvNoRecords: '暂无记录可导出',
+      csvReady: 'CSV 已生成',
+      cryptoUnsupported: '当前浏览器不支持加密同步',
+      cloudBadSyncCode: '同步码不匹配，无法读取云端记录',
+      loadScriptFailed: '无法加载 {src}',
+      firebaseNotLoaded: 'Firebase SDK 未加载',
+      cloudConfigMissing: '请先配置 cloud-config.js',
+      syncCodeRequired: '请输入同步码',
+      offlineAutoSync: '当前离线，稍后自动同步',
+      cloudSyncComplete: '云端同步完成',
+      cloudSyncFailed: '云端同步失败',
+      syncCodeTooShort: '同步码至少 6 位',
+      cloudDisconnected: '已断开云端同步',
+      confirmDelete: '确定要删除这条打卡记录吗？',
+      serviceWorkerRegisterFailed: 'Service Worker 注册失败：',
+      languageChanged: '已切换为中文'
+    },
+    en: {
+      htmlLang: 'en',
+      locale: 'en',
+      documentTitle: 'Work Clock',
+      metaDescription: 'A minimal offline-ready work clock PWA with optional cloud sync.',
+      topbarAria: 'App status and time',
+      languageSwitchAria: 'Change language',
+      languageOptionChinese: 'Switch to Chinese',
+      languageOptionEnglish: 'Switch to English',
+      appHeading: "Li's Work Clock",
+      todayEyebrow: 'Today',
+      summaryAria: "Today's clock summary",
+      clockInLabel: 'Clock in',
+      clockOutLabel: 'Clock out',
+      durationLabel: "Today's hours",
+      clockInButton: 'Clock in',
+      clockOutButton: 'Clock out',
+      installHint: 'In iPhone Safari, tap Share, then Add to Home Screen to use it like an app.',
+      recordsEyebrow: 'Records',
+      historyTitle: 'History',
+      cloudSyncButton: 'Sync cloud',
+      exportButton: 'Export CSV',
+      cloudTitle: 'Cloud sync',
+      syncCodePlaceholder: 'Sync code',
+      syncCodeAria: 'Cloud sync code',
+      connectButton: 'Connect',
+      disconnectButton: 'Disconnect',
+      updateAvailable: 'New version available',
+      reloadButton: 'Update now',
+      connectionOffline: 'Available offline',
+      connectionCloudOn: 'Cloud sync on',
+      connectionLocalCloudAvailable: 'Local storage · Cloud ready',
+      connectionLocalOnly: 'Local offline storage',
+      cloudStatusNotConfigured: 'Not configured',
+      cloudNeedsConfig: 'Needs cloud-config.js',
+      cloudOfflineLater: 'Offline, sync later',
+      cloudOffline: 'Offline',
+      cloudInputCode: 'Enter sync code',
+      cloudSyncing: 'Syncing',
+      cloudLastSynced: 'Last synced {time}',
+      cloudWaitingFirstSync: 'Waiting for first sync',
+      todayStatusDone: 'Done today',
+      todayStatusWorking: 'Clocked in',
+      todayStatusPending: 'Not clocked in',
+      emptyHistory: 'No clock records yet.<br>Tap “Clock in” to start your first day.',
+      historyMeta: 'In {inTime} · Out {outTime}',
+      deleteButton: 'Delete',
+      durationZero: '0 min',
+      durationMinutes: '{minutes} min',
+      durationHours: '{hours} hr',
+      durationHoursMinutes: '{hours} hr {minutes} min',
+      alreadyClockedIn: 'Already clocked in today',
+      clockInSuccess: 'Clocked in at {time}',
+      clockInFirst: 'Please clock in first',
+      alreadyClockedOut: 'Already clocked out today',
+      clockOutSuccess: 'Clocked out at {time}',
+      recordDeleted: 'Record deleted',
+      csvDateHeader: 'Date',
+      csvClockInHeader: 'Clock-in time',
+      csvClockOutHeader: 'Clock-out time',
+      csvDurationHeader: 'Hours',
+      csvNoRecords: 'No records to export',
+      csvReady: 'CSV generated',
+      cryptoUnsupported: 'This browser does not support encrypted sync',
+      cloudBadSyncCode: 'Sync code does not match, so cloud records cannot be read',
+      loadScriptFailed: 'Could not load {src}',
+      firebaseNotLoaded: 'Firebase SDK did not load',
+      cloudConfigMissing: 'Please configure cloud-config.js first',
+      syncCodeRequired: 'Please enter a sync code',
+      offlineAutoSync: 'Currently offline, automatic sync will retry later',
+      cloudSyncComplete: 'Cloud sync complete',
+      cloudSyncFailed: 'Cloud sync failed',
+      syncCodeTooShort: 'Sync code must be at least 6 characters',
+      cloudDisconnected: 'Cloud sync disconnected',
+      confirmDelete: 'Delete this clock record?',
+      serviceWorkerRegisterFailed: 'Service Worker registration failed:',
+      languageChanged: 'Switched to English'
+    }
+  };
 
   const $ = (selector) => document.querySelector(selector);
 
@@ -35,7 +195,8 @@
     cloudCodeInput: $('#cloudCodeInput'),
     cloudStatus: $('#cloudStatus'),
     cloudDot: $('#cloudDot'),
-    cloudSyncPanel: $('#cloudSyncPanel')
+    cloudSyncPanel: $('#cloudSyncPanel'),
+    languageOptions: document.querySelectorAll('[data-language]')
   };
 
   const cloudConfig = window.WORK_CLOCK_CLOUD_CONFIG || {};
@@ -57,9 +218,38 @@
   let waitingWorker = null;
   let renderedDateKey = getDateKey(new Date());
   let cloudSaveTimer = null;
+  let currentLanguage = loadLanguage();
 
   function pad(value) {
     return String(value).padStart(2, '0');
+  }
+
+  function t(key, values = {}) {
+    const dictionary = TRANSLATIONS[currentLanguage] || TRANSLATIONS[DEFAULT_LANGUAGE];
+    const template = dictionary[key] || TRANSLATIONS[DEFAULT_LANGUAGE][key] || key;
+
+    return template.replace(/\{(\w+)\}/g, (_, name) => {
+      return values[name] ?? '';
+    });
+  }
+
+  function loadLanguage() {
+    try {
+      const savedLanguage = localStorage.getItem(LANGUAGE_KEY);
+      if (TRANSLATIONS[savedLanguage]) return savedLanguage;
+    } catch (error) {
+      // Keep the default language if storage is unavailable.
+    }
+
+    return DEFAULT_LANGUAGE;
+  }
+
+  function saveLanguage() {
+    try {
+      localStorage.setItem(LANGUAGE_KEY, currentLanguage);
+    } catch (error) {
+      // The UI can still switch languages for the current session.
+    }
   }
 
   function getDateKey(date) {
@@ -73,7 +263,7 @@
 
   function formatTime(isoString) {
     if (!isoString) return '--:--';
-    return new Date(isoString).toLocaleTimeString('zh-CN', {
+    return new Date(isoString).toLocaleTimeString(t('locale'), {
       hour: '2-digit',
       minute: '2-digit',
       hour12: false
@@ -81,7 +271,7 @@
   }
 
   function formatDateTitle(dateKey) {
-    return parseDateKey(dateKey).toLocaleDateString('zh-CN', {
+    return parseDateKey(dateKey).toLocaleDateString(t('locale'), {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -90,7 +280,7 @@
   }
 
   function formatHistoryDate(dateKey) {
-    return parseDateKey(dateKey).toLocaleDateString('zh-CN', {
+    return parseDateKey(dateKey).toLocaleDateString(t('locale'), {
       month: 'long',
       day: 'numeric',
       weekday: 'short'
@@ -101,21 +291,21 @@
     if (!clockIn || !clockOut) return '--';
 
     const diff = new Date(clockOut).getTime() - new Date(clockIn).getTime();
-    if (!Number.isFinite(diff) || diff <= 0) return '0分钟';
+    if (!Number.isFinite(diff) || diff <= 0) return t('durationZero');
 
     const totalMinutes = Math.round(diff / 60000);
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
 
-    if (hours <= 0) return `${minutes}分钟`;
-    if (minutes === 0) return `${hours}小时`;
-    return `${hours}小时${minutes}分钟`;
+    if (hours <= 0) return t('durationMinutes', { minutes });
+    if (minutes === 0) return t('durationHours', { hours });
+    return t('durationHoursMinutes', { hours, minutes });
   }
 
   function formatSyncTime(isoString) {
     if (!isoString) return '';
 
-    return new Date(isoString).toLocaleTimeString('zh-CN', {
+    return new Date(isoString).toLocaleTimeString(t('locale'), {
       hour: '2-digit',
       minute: '2-digit',
       hour12: false
@@ -224,6 +414,64 @@
     }, 2200);
   }
 
+  function renderLanguageControls() {
+    elements.languageOptions.forEach((button) => {
+      const language = button.dataset.language;
+      const active = language === currentLanguage;
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-pressed', String(active));
+      button.setAttribute(
+        'aria-label',
+        language === 'zh' ? t('languageOptionChinese') : t('languageOptionEnglish')
+      );
+    });
+  }
+
+  function renderStaticText() {
+    document.documentElement.lang = t('htmlLang');
+    document.title = t('documentTitle');
+
+    const descriptionMeta = document.querySelector('meta[name="description"]');
+    if (descriptionMeta) {
+      descriptionMeta.content = t('metaDescription');
+    }
+
+    const appleTitleMeta = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+    if (appleTitleMeta) {
+      appleTitleMeta.content = t('documentTitle');
+    }
+
+    document.querySelectorAll('[data-i18n]').forEach((node) => {
+      node.textContent = t(node.dataset.i18n);
+    });
+
+    document.querySelectorAll('[data-i18n-placeholder]').forEach((node) => {
+      node.placeholder = t(node.dataset.i18nPlaceholder);
+    });
+
+    document.querySelectorAll('[data-i18n-aria-label]').forEach((node) => {
+      node.setAttribute('aria-label', t(node.dataset.i18nAriaLabel));
+    });
+
+    renderLanguageControls();
+  }
+
+  function setLanguage(language) {
+    if (!TRANSLATIONS[language]) return;
+
+    const changed = currentLanguage !== language;
+    currentLanguage = language;
+    saveLanguage();
+    renderStaticText();
+    updateClock();
+    updateConnectionStatus();
+    render();
+
+    if (changed) {
+      showToast(t('languageChanged'));
+    }
+  }
+
   function loadCloudSettings() {
     try {
       const raw = localStorage.getItem(CLOUD_SETTINGS_KEY);
@@ -272,13 +520,13 @@
 
   function updateConnectionStatus() {
     if (!navigator.onLine) {
-      elements.connectionStatus.textContent = '离线可用';
+      elements.connectionStatus.textContent = t('connectionOffline');
     } else if (cloudState.configured && cloudState.syncCode) {
-      elements.connectionStatus.textContent = '云端同步已开启';
+      elements.connectionStatus.textContent = t('connectionCloudOn');
     } else if (cloudState.configured) {
-      elements.connectionStatus.textContent = '本地存储 · 可连接云端';
+      elements.connectionStatus.textContent = t('connectionLocalCloudAvailable');
     } else {
-      elements.connectionStatus.textContent = '本地离线存储';
+      elements.connectionStatus.textContent = t('connectionLocalOnly');
     }
 
     renderCloudControls();
@@ -288,7 +536,7 @@
     if (!elements.cloudStatus) return;
 
     const connected = Boolean(cloudState.configured && cloudState.syncCode);
-    let statusText = '未配置';
+    let statusText = t('cloudStatusNotConfigured');
     let state = 'off';
 
     elements.cloudSyncButton.disabled = true;
@@ -297,21 +545,23 @@
     elements.cloudDisconnectButton.hidden = !connected;
 
     if (!cloudState.configured) {
-      statusText = '需要 cloud-config.js';
+      statusText = t('cloudNeedsConfig');
     } else if (!navigator.onLine) {
-      statusText = connected ? '离线，稍后同步' : '离线';
+      statusText = connected ? t('cloudOfflineLater') : t('cloudOffline');
       state = 'offline';
     } else if (!connected) {
-      statusText = '输入同步码连接';
+      statusText = t('cloudInputCode');
     } else if (cloudState.syncing) {
-      statusText = '正在同步';
+      statusText = t('cloudSyncing');
       state = 'syncing';
     } else if (cloudState.error) {
       statusText = cloudState.error;
       state = 'error';
       elements.cloudSyncButton.disabled = false;
     } else {
-      statusText = cloudState.lastSyncedAt ? `上次同步 ${formatSyncTime(cloudState.lastSyncedAt)}` : '等待首次同步';
+      statusText = cloudState.lastSyncedAt
+        ? t('cloudLastSynced', { time: formatSyncTime(cloudState.lastSyncedAt) })
+        : t('cloudWaitingFirstSync');
       state = 'ready';
       elements.cloudSyncButton.disabled = false;
     }
@@ -323,7 +573,7 @@
 
   function updateClock() {
     const now = new Date();
-    elements.currentTime.textContent = now.toLocaleTimeString('zh-CN', {
+    elements.currentTime.textContent = now.toLocaleTimeString(t('locale'), {
       hour: '2-digit',
       minute: '2-digit',
       hour12: false
@@ -346,13 +596,13 @@
     elements.todayStatus.classList.remove('working', 'done');
 
     if (record.clockIn && record.clockOut) {
-      elements.todayStatus.textContent = '今日已完成';
+      elements.todayStatus.textContent = t('todayStatusDone');
       elements.todayStatus.classList.add('done');
     } else if (record.clockIn) {
-      elements.todayStatus.textContent = '已上班';
+      elements.todayStatus.textContent = t('todayStatusWorking');
       elements.todayStatus.classList.add('working');
     } else {
-      elements.todayStatus.textContent = '待打卡';
+      elements.todayStatus.textContent = t('todayStatusPending');
     }
 
     elements.clockInButton.disabled = Boolean(record.clockIn);
@@ -369,7 +619,7 @@
     const visibleRecords = getVisibleRecords();
 
     if (visibleRecords.length === 0) {
-      elements.historyList.innerHTML = '<div class="empty-state">还没有打卡记录。<br>点击“上班打卡”开始记录第一天。</div>';
+      elements.historyList.innerHTML = `<div class="empty-state">${t('emptyHistory')}</div>`;
       return;
     }
 
@@ -380,12 +630,15 @@
         <article class="history-item">
           <div>
             <div class="history-date">${formatHistoryDate(record.date)}</div>
-            <div class="history-meta">上班 ${formatTime(record.clockIn)} · 下班 ${formatTime(record.clockOut)}</div>
+            <div class="history-meta">${t('historyMeta', {
+              inTime: formatTime(record.clockIn),
+              outTime: formatTime(record.clockOut)
+            })}</div>
           </div>
 
           <div class="history-actions">
             <div class="history-duration">${duration}</div>
-            <button class="delete-history-btn" data-date="${record.date}">删除</button>
+            <button class="delete-history-btn" data-date="${record.date}">${t('deleteButton')}</button>
           </div>
         </article>
       `;
@@ -410,7 +663,7 @@
     const record = getTodayRecord(true);
 
     if (record.clockIn) {
-      showToast('今天已经上班打卡了');
+      showToast(t('alreadyClockedIn'));
       return;
     }
 
@@ -420,7 +673,7 @@
     persistRecords();
     render();
     vibrate([18, 30, 18]);
-    showToast(`上班打卡成功：${formatTime(now)}`);
+    showToast(t('clockInSuccess', { time: formatTime(now) }));
   }
 
   function clockOut() {
@@ -428,12 +681,12 @@
     const record = getTodayRecord(false);
 
     if (!record.clockIn) {
-      showToast('请先完成上班打卡');
+      showToast(t('clockInFirst'));
       return;
     }
 
     if (record.clockOut) {
-      showToast('今天已经下班打卡了');
+      showToast(t('alreadyClockedOut'));
       return;
     }
 
@@ -443,7 +696,7 @@
     persistRecords();
     render();
     vibrate([18, 30, 18]);
-    showToast(`下班打卡成功：${formatTime(now)}`);
+    showToast(t('clockOutSuccess', { time: formatTime(now) }));
   }
 
   function deleteHistoryRecord(date) {
@@ -468,7 +721,7 @@
 
     persistRecords();
     render();
-    showToast('记录已删除');
+    showToast(t('recordDeleted'));
   }
 
   function csvEscape(value) {
@@ -481,7 +734,7 @@
 
   function exportCSV() {
     const rows = [
-      ['日期', '上班时间', '下班时间', '工时'],
+      [t('csvDateHeader'), t('csvClockInHeader'), t('csvClockOutHeader'), t('csvDurationHeader')],
       ...getVisibleRecords().map((record) => [
         record.date,
         formatTime(record.clockIn),
@@ -491,7 +744,7 @@
     ];
 
     if (rows.length === 1) {
-      showToast('暂无记录可导出');
+      showToast(t('csvNoRecords'));
       return;
     }
 
@@ -506,7 +759,7 @@
     link.click();
     link.remove();
     URL.revokeObjectURL(url);
-    showToast('CSV 已生成');
+    showToast(t('csvReady'));
   }
 
   function bytesToBase64(bytes) {
@@ -536,7 +789,7 @@
 
   async function deriveCloudIdentity(syncCode) {
     if (!window.crypto || !window.crypto.subtle) {
-      throw new Error('当前浏览器不支持加密同步');
+      throw new Error(t('cryptoUnsupported'));
     }
 
     const normalizedCode = syncCode.trim();
@@ -615,7 +868,7 @@
       const remoteRecords = Array.isArray(parsed) ? parsed : parsed.records;
       return Array.isArray(remoteRecords) ? remoteRecords.map(normalizeRecord).filter(Boolean) : [];
     } catch (error) {
-      throw new Error('同步码不匹配，无法读取云端记录');
+      throw new Error(t('cloudBadSyncCode'));
     }
   }
 
@@ -653,7 +906,7 @@
           return;
         }
         existingScript.addEventListener('load', () => resolve(), { once: true });
-        existingScript.addEventListener('error', () => reject(new Error(`无法加载 ${src}`)), { once: true });
+        existingScript.addEventListener('error', () => reject(new Error(t('loadScriptFailed', { src }))), { once: true });
         return;
       }
 
@@ -665,7 +918,7 @@
         script.dataset.loaded = 'true';
         resolve();
       }, { once: true });
-      script.addEventListener('error', () => reject(new Error(`无法加载 ${src}`)), { once: true });
+      script.addEventListener('error', () => reject(new Error(t('loadScriptFailed', { src }))), { once: true });
       document.head.appendChild(script);
     });
   }
@@ -680,7 +933,7 @@
       }
 
       if (!window.firebase || !window.firebase.firestore) {
-        throw new Error('Firebase SDK 未加载');
+        throw new Error(t('firebaseNotLoaded'));
       }
 
       const appName = 'work-clock-cloud';
@@ -699,19 +952,19 @@
 
   async function syncCloud({ silent = false } = {}) {
     if (!cloudState.configured) {
-      if (!silent) showToast('请先配置 cloud-config.js');
+      if (!silent) showToast(t('cloudConfigMissing'));
       renderCloudControls();
       return;
     }
 
     if (!cloudState.syncCode) {
-      if (!silent) showToast('请输入同步码');
+      if (!silent) showToast(t('syncCodeRequired'));
       renderCloudControls();
       return;
     }
 
     if (!navigator.onLine) {
-      if (!silent) showToast('当前离线，稍后自动同步');
+      if (!silent) showToast(t('offlineAutoSync'));
       renderCloudControls();
       return;
     }
@@ -745,10 +998,10 @@
       cloudState.lastSyncedAt = new Date().toISOString();
       saveCloudSettings();
       updateConnectionStatus();
-      if (!silent) showToast('云端同步完成');
+      if (!silent) showToast(t('cloudSyncComplete'));
     } catch (error) {
       console.warn('云端同步失败：', error);
-      cloudState.error = error.message || '云端同步失败';
+      cloudState.error = error.message || t('cloudSyncFailed');
       if (!silent) showToast(cloudState.error);
     } finally {
       cloudState.syncing = false;
@@ -767,13 +1020,13 @@
 
   async function connectCloud() {
     if (!cloudState.configured) {
-      showToast('请先配置 cloud-config.js');
+      showToast(t('cloudConfigMissing'));
       return;
     }
 
     const syncCode = elements.cloudCodeInput.value.trim();
     if (syncCode.length < 6) {
-      showToast('同步码至少 6 位');
+      showToast(t('syncCodeTooShort'));
       return;
     }
 
@@ -796,7 +1049,7 @@
     elements.cloudCodeInput.value = '';
     saveCloudSettings();
     updateConnectionStatus();
-    showToast('已断开云端同步');
+    showToast(t('cloudDisconnected'));
   }
 
   function bootCloudSync() {
@@ -833,7 +1086,7 @@
           });
         });
       } catch (error) {
-        console.warn('Service Worker 注册失败：', error);
+        console.warn(t('serviceWorkerRegisterFailed'), error);
       }
     });
 
@@ -848,6 +1101,11 @@
   elements.cloudConnectButton.addEventListener('click', connectCloud);
   elements.cloudDisconnectButton.addEventListener('click', disconnectCloud);
   elements.cloudSyncButton.addEventListener('click', () => syncCloud());
+  elements.languageOptions.forEach((button) => {
+    button.addEventListener('click', () => {
+      setLanguage(button.dataset.language);
+    });
+  });
   elements.cloudCodeInput.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
       connectCloud();
@@ -857,7 +1115,7 @@
     const button = event.target.closest('.delete-history-btn');
     if (!button) return;
 
-    if (!confirm('确定要删除这条打卡记录吗？')) return;
+    if (!confirm(t('confirmDelete'))) return;
     deleteHistoryRecord(button.dataset.date);
   });
   elements.reloadButton.addEventListener('click', () => {
@@ -874,6 +1132,7 @@
   });
   window.addEventListener('offline', updateConnectionStatus);
 
+  renderStaticText();
   updateConnectionStatus();
   updateClock();
   render();

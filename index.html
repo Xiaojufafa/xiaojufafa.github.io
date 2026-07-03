@@ -17,17 +17,23 @@
 </head>
 <body>
   <noscript>
-    <div class="noscript">这个打卡应用需要启用 JavaScript 才能运行。</div>
+    <div class="noscript">这个打卡应用需要启用 JavaScript 才能运行。 / This work clock app needs JavaScript to run.</div>
   </noscript>
 
   <div class="app-shell">
-    <header class="topbar" aria-label="应用顶部信息">
+    <header class="topbar" aria-label="应用顶部信息" data-i18n-aria-label="topbarAria">
       <div>
         <p class="eyebrow" id="connectionStatus">本地离线存储</p>
-        <h1>李小弟上班啦！</h1>
+        <h1 data-i18n="appHeading">李小弟上班啦！</h1>
       </div>
-      <div class="clock-pill" aria-live="polite">
-        <span id="currentTime">--:--</span>
+      <div class="topbar-actions">
+        <div class="language-switch" role="group" aria-label="切换语言" data-i18n-aria-label="languageSwitchAria">
+          <button class="language-option active" data-language="zh" type="button" aria-pressed="true">中</button>
+          <button class="language-option" data-language="en" type="button" aria-pressed="false">EN</button>
+        </div>
+        <div class="clock-pill" aria-live="polite">
+          <span id="currentTime">--:--</span>
+        </div>
       </div>
     </header>
 
@@ -35,23 +41,23 @@
       <section class="card today-card" aria-labelledby="todayTitle">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">今天</p>
+            <p class="eyebrow" data-i18n="todayEyebrow">今天</p>
             <h2 id="todayTitle">--</h2>
           </div>
           <span class="status-badge" id="todayStatus">待打卡</span>
         </div>
 
-        <div class="summary-grid" aria-label="今日打卡摘要">
+        <div class="summary-grid" aria-label="今日打卡摘要" data-i18n-aria-label="summaryAria">
           <div class="summary-item">
-            <span>上班</span>
+            <span data-i18n="clockInLabel">上班</span>
             <strong id="todayIn">--:--</strong>
           </div>
           <div class="summary-item">
-            <span>下班</span>
+            <span data-i18n="clockOutLabel">下班</span>
             <strong id="todayOut">--:--</strong>
           </div>
           <div class="summary-item wide">
-            <span>今日工时</span>
+            <span data-i18n="durationLabel">今日工时</span>
             <strong id="todayDuration">--</strong>
           </div>
         </div>
@@ -59,26 +65,26 @@
         <div class="action-row">
           <button class="primary-button" id="clockInButton" type="button">
             <span class="button-icon">↗</span>
-            上班打卡
+            <span class="button-label" data-i18n="clockInButton">上班打卡</span>
           </button>
           <button class="secondary-button" id="clockOutButton" type="button">
             <span class="button-icon">↘</span>
-            下班打卡
+            <span class="button-label" data-i18n="clockOutButton">下班打卡</span>
           </button>
         </div>
 
-        <p class="hint" id="installHint">在 iPhone Safari 中点击“分享” → “添加到主屏幕”，即可像 App 一样使用。</p>
+        <p class="hint" id="installHint" data-i18n="installHint">在 iPhone Safari 中点击“分享” → “添加到主屏幕”，即可像 App 一样使用。</p>
       </section>
 
       <section class="card history-card" aria-labelledby="historyTitle">
         <div class="section-heading compact">
           <div>
-            <p class="eyebrow">记录</p>
-            <h2 id="historyTitle">历史记录</h2>
+            <p class="eyebrow" data-i18n="recordsEyebrow">记录</p>
+            <h2 id="historyTitle" data-i18n="historyTitle">历史记录</h2>
           </div>
           <div class="toolbar-buttons">
-            <button class="text-button" id="cloudSyncButton" type="button">同步云端</button>
-            <button class="text-button" id="exportButton" type="button">导出 CSV</button>
+            <button class="text-button" id="cloudSyncButton" type="button" data-i18n="cloudSyncButton">同步云端</button>
+            <button class="text-button" id="exportButton" type="button" data-i18n="exportButton">导出 CSV</button>
           </div>
         </div>
 
@@ -86,14 +92,14 @@
           <div class="cloud-sync-status">
             <span class="cloud-dot" id="cloudDot" aria-hidden="true"></span>
             <div>
-              <div class="cloud-title">云端同步</div>
+              <div class="cloud-title" data-i18n="cloudTitle">云端同步</div>
               <div class="cloud-meta" id="cloudStatus">未配置</div>
             </div>
           </div>
           <div class="cloud-form">
-            <input class="cloud-input" id="cloudCodeInput" type="password" autocomplete="off" placeholder="同步码" aria-label="云端同步码" />
-            <button class="text-button" id="cloudConnectButton" type="button">连接</button>
-            <button class="text-button danger-text-button" id="cloudDisconnectButton" type="button" hidden>断开</button>
+            <input class="cloud-input" id="cloudCodeInput" type="password" autocomplete="off" placeholder="同步码" aria-label="云端同步码" data-i18n-placeholder="syncCodePlaceholder" data-i18n-aria-label="syncCodeAria" />
+            <button class="text-button" id="cloudConnectButton" type="button" data-i18n="connectButton">连接</button>
+            <button class="text-button danger-text-button" id="cloudDisconnectButton" type="button" hidden data-i18n="disconnectButton">断开</button>
           </div>
         </div>
 
@@ -105,8 +111,8 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <div class="update-banner" id="updateBanner" hidden>
-    <span>发现新版本</span>
-    <button id="reloadButton" type="button">立即更新</button>
+    <span data-i18n="updateAvailable">发现新版本</span>
+    <button id="reloadButton" type="button" data-i18n="reloadButton">立即更新</button>
   </div>
   
   <script src="./cloud-config.js" defer></script>

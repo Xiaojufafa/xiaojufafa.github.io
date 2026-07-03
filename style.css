@@ -93,6 +93,40 @@ button:disabled {
   margin-bottom: 18px;
 }
 
+.topbar-actions {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.language-switch {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.54);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+.language-option {
+  min-width: 38px;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 999px;
+  color: var(--muted);
+  background: transparent;
+  font-size: 13px;
+  font-weight: 780;
+}
+
+.language-option.active {
+  color: #ffffff;
+  background: var(--blue);
+}
+
 h1,
 h2,
 p {
@@ -131,6 +165,7 @@ h2 {
 }
 
 @media (prefers-color-scheme: dark) {
+  .language-switch,
   .clock-pill,
   .status-badge {
     background: rgba(255, 255, 255, 0.07);
@@ -479,6 +514,15 @@ h2 {
   .app-shell {
     padding-right: 12px;
     padding-left: 12px;
+  }
+
+  .topbar {
+    align-items: flex-start;
+  }
+
+  .topbar-actions {
+    flex-direction: column;
+    align-items: flex-end;
   }
 
   .today-card,
