@@ -213,6 +213,12 @@
     cloudConnectButton: $('#cloudConnectButton'),
     cloudDisconnectButton: $('#cloudDisconnectButton'),
     cloudCodeInput: $('#cloudCodeInput'),
+    cloudCreateButton: $('#cloudCreateButton'),
+    syncCodeDisplay: $('#syncCodeDisplay'),
+    currentSyncCode: $('#currentSyncCode'),
+    copySyncCodeButton: $('#copySyncCodeButton'),
+    cloudDestinationText: $('#cloudDestinationText'),
+    cloudConsoleLink: $('#cloudConsoleLink'),
     cloudStatus: $('#cloudStatus'),
     cloudDot: $('#cloudDot'),
     cloudSyncPanel: $('#cloudSyncPanel'),
@@ -520,6 +526,81 @@
     }));
   }
 
+  function generateSyncCode() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const randomValues = new Uint32Array(16);
+
+    if (window.crypto?.getRandomValues) {
+      window.crypto.getRandomValues(randomValues);
+    } else {
+      for (let index = 0; index < randomValues.length; index += 1) {
+        randomValues[index] = Math.floor(Math.random() * 4294967296);
+      }
+    }
+
+    const chunks = [];
+    for (let index = 0; index < randomValues.length; index += 1) {
+      if (index > 0 && index % 4 === 0) chunks.push('-');
+      chunks.push(chars[randomValues[index] % chars.length]);
+    }
+
+    return `WC-${chunks.join('')}`;
+  }
+
+  function setVisibleSyncCode(syncCode) {
+    if (!elements.syncCodeDisplay || !elements.currentSyncCode) return;
+
+    elements.syncCodeDisplay.hidden = !syncCode;
+    elements.currentSyncCode.textContent = syncCode || '';
+  }
+
+  function getCloudDestinationText() {
+    const firebaseConfig = getFirebaseConfig();
+
+    if (!cloudState.configured) return t('cloudNeedsConfig');
+    if (!cloudState.syncCode || !cloudState.docId) return t('cloudDestinationNotReady');
+
+    return t('cloudDestinationReady', {
+      projectId: firebaseConfig.projectId,
+      collectionName: getCloudCollectionName(),
+      docId: cloudState.docId
+    });
+  }
+
+  function renderCloudDestination() {
+    if (!elements.cloudDestinationText) return;
+
+    const firebaseConfig = getFirebaseConfig();
+    const hasDestination = Boolean(cloudState.configured && cloudState.syncCode && cloudState.docId);
+
+    elements.cloudDestinationText.textContent = getCloudDestinationText();
+
+    if (!elements.cloudConsoleLink) return;
+
+    elements.cloudConsoleLink.hidden = !hasDestination;
+    if (hasDestination) {
+      const path = `~2F${encodeURIComponent(getCloudCollectionName())}~2F${encodeURIComponent(cloudState.docId)}`;
+      elements.cloudConsoleLink.href = `https://console.firebase.google.com/project/${encodeURIComponent(firebaseConfig.projectId)}/firestore/data/${path}`;
+    } else {
+      elements.cloudConsoleLink.href = '#';
+    }
+  }
+
+  async function prepareCloudIdentityForDisplay() {
+    if (!cloudState.configured || !cloudState.syncCode) {
+      renderCloudDestination();
+      return;
+    }
+
+    try {
+      await initializeCloudIdentity();
+    } catch (error) {
+      console.warn('准备云端同步位置失败：', error);
+    } finally {
+      renderCloudDestination();
+    }
+  }
+  
   function getFirebaseConfig() {
     return cloudConfig.firebase || {};
   }
@@ -678,7 +759,6 @@
     renderHistory();
     renderInstallHint();
     renderCloudControls();
-    saveRecords();
   }
 
   function clockIn() {
@@ -1185,6 +1265,8 @@
   elements.exportButton.addEventListener('click', exportCSV);
   elements.cloudConnectButton.addEventListener('click', connectCloud);
   elements.cloudDisconnectButton.addEventListener('click', disconnectCloud);
+  elements.cloudCreateButton.addEventListener('click', createSyncCode);
+  elements.copySyncCodeButton.addEventListener('click', copyCurrentSyncCode);
   elements.cloudSyncButton.addEventListener('click', () => syncCloud());
   elements.languageOptions.forEach((button) => {
     button.addEventListener('click', () => {
