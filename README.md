@@ -89,9 +89,19 @@ service cloud.firestore {
 }
 ```
 
-6. 重新部署后，在页面里输入至少 6 位同步码并点击“连接”。
+6. 重新部署后，点击页面里的“生成”创建同步码。
+7. 复制并保存同步码。另一台设备要同步同一份记录时，需要输入同一个同步码。
+8. 点击“连接”，然后点击“同步云端”。
 
 同一个同步码可以在不同设备之间同步记录。记录上传前会在浏览器里加密，建议使用不容易被猜到的同步码。
+
+页面会显示同步位置，格式类似：
+
+```text
+Firebase: work-clock-5bb55 / workClockHistories / 生成的文档 ID
+```
+
+点击“查看数据”可以打开 Firebase Console 中对应的 Firestore 文档。文档里能看到 `app`、`version`、`clientUpdatedAt`、`updatedAt`、`encrypted` 等字段。真实打卡记录在 `encrypted.data` 中，是加密后的内容，所以看起来不是普通文字，这是正常的。
 
 ## 部署到 GitHub Pages
 
@@ -135,4 +145,3 @@ https://你的用户名.github.io/work-clock/
 以后如果修改了 `index.html`、`style.css`、`script.js` 等文件，只需要重新上传覆盖 GitHub 仓库里的旧文件即可。
 
 因为项目使用了 Service Worker 离线缓存，新版本发布后，已安装的 App 可能需要重新打开一次，或者点击页面底部出现的“立即更新”。
- 

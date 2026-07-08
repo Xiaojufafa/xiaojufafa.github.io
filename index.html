@@ -24,7 +24,7 @@
     <header class="topbar" aria-label="应用顶部信息" data-i18n-aria-label="topbarAria">
       <div>
         <p class="eyebrow" id="connectionStatus">本地离线存储</p>
-        <h1>李小弟上班啦！</h1>
+        <h1>公主请上班！</h1>
       </div>
       <div class="clock-pill" aria-live="polite">
         <span id="currentTime">--:--</span>
@@ -92,8 +92,19 @@
           </div>
           <div class="cloud-form">
             <input class="cloud-input" id="cloudCodeInput" type="password" autocomplete="off" placeholder="同步码" aria-label="云端同步码" data-i18n-placeholder="syncCodePlaceholder" data-i18n-aria-label="syncCodeAria" />
+            <button class="text-button" id="cloudCreateButton" type="button" data-i18n="createSyncCodeButton">生成</button>
             <button class="text-button" id="cloudConnectButton" type="button" data-i18n="connectButton">连接</button>
             <button class="text-button danger-text-button" id="cloudDisconnectButton" type="button" hidden data-i18n="disconnectButton">断开</button>
+          </div>
+          <div class="sync-code-display" id="syncCodeDisplay" hidden>
+            <span data-i18n="currentSyncCodeLabel">当前同步码</span>
+            <strong id="currentSyncCode"></strong>
+            <button id="copySyncCodeButton" class="text-button" type="button" data-i18n="copySyncCodeButton">复制</button>
+          </div>
+          <div class="cloud-destination" id="cloudDestination">
+            <span data-i18n="cloudDestinationLabel">同步位置</span>
+            <strong id="cloudDestinationText">--</strong>
+            <a class="cloud-console-link" id="cloudConsoleLink" href="#" target="_blank" rel="noopener" hidden data-i18n="cloudConsoleLink">查看数据</a>
           </div>
         </div>
 

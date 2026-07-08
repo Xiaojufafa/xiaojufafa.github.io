@@ -38,8 +38,15 @@
       cloudTitle: '云端同步',
       syncCodePlaceholder: '同步码',
       syncCodeAria: '云端同步码',
+      createSyncCodeButton: '生成',
       connectButton: '连接',
       disconnectButton: '断开',
+      currentSyncCodeLabel: '当前同步码',
+      copySyncCodeButton: '复制',
+      cloudDestinationLabel: '同步位置',
+      cloudDestinationNotReady: '连接后显示 Firestore 位置',
+      cloudDestinationReady: 'Firebase: {projectId} / {collectionName} / {docId}',
+      cloudConsoleLink: '查看数据',
       updateAvailable: '发现新版本',
       reloadButton: '立即更新',
       connectionOffline: '离线可用',
@@ -86,6 +93,9 @@
       cloudSyncComplete: '云端同步完成',
       cloudSyncFailed: '云端同步失败',
       syncCodeTooShort: '同步码至少 6 位',
+      syncCodeGenerated: '同步码已生成',
+      syncCodeCopied: '同步码已复制',
+      copySyncCodeFailed: '复制失败，请手动复制',
       cloudDisconnected: '已断开云端同步',
       confirmDelete: '确定要删除这条打卡记录吗？',
       serviceWorkerRegisterFailed: 'Service Worker 注册失败：',
@@ -116,8 +126,15 @@
       cloudTitle: 'Cloud sync',
       syncCodePlaceholder: 'Sync code',
       syncCodeAria: 'Cloud sync code',
+      createSyncCodeButton: 'Generate',
       connectButton: 'Connect',
       disconnectButton: 'Disconnect',
+      currentSyncCodeLabel: 'Current sync code',
+      copySyncCodeButton: 'Copy',
+      cloudDestinationLabel: 'Sync location',
+      cloudDestinationNotReady: 'Firestore location appears after connecting',
+      cloudDestinationReady: 'Firebase: {projectId} / {collectionName} / {docId}',
+      cloudConsoleLink: 'View data',
       updateAvailable: 'New version available',
       reloadButton: 'Update now',
       connectionOffline: 'Available offline',
@@ -164,6 +181,9 @@
       cloudSyncComplete: 'Cloud sync complete',
       cloudSyncFailed: 'Cloud sync failed',
       syncCodeTooShort: 'Sync code must be at least 6 characters',
+      syncCodeGenerated: 'Sync code generated',
+      syncCodeCopied: 'Sync code copied',
+      copySyncCodeFailed: 'Copy failed; copy it manually',
       cloudDisconnected: 'Cloud sync disconnected',
       confirmDelete: 'Delete this clock record?',
       serviceWorkerRegisterFailed: 'Service Worker registration failed:',
@@ -193,6 +213,12 @@
     cloudConnectButton: $('#cloudConnectButton'),
     cloudDisconnectButton: $('#cloudDisconnectButton'),
     cloudCodeInput: $('#cloudCodeInput'),
+    cloudCreateButton: $('#cloudCreateButton'),
+    syncCodeDisplay: $('#syncCodeDisplay'),
+    currentSyncCode: $('#currentSyncCode'),
+    copySyncCodeButton: $('#copySyncCodeButton'),
+    cloudDestinationText: $('#cloudDestinationText'),
+    cloudConsoleLink: $('#cloudConsoleLink'),
     cloudStatus: $('#cloudStatus'),
     cloudDot: $('#cloudDot'),
     cloudSyncPanel: $('#cloudSyncPanel'),
@@ -500,6 +526,81 @@
     }));
   }
 
+  function generateSyncCode() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const randomValues = new Uint32Array(16);
+
+    if (window.crypto?.getRandomValues) {
+      window.crypto.getRandomValues(randomValues);
+    } else {
+      for (let index = 0; index < randomValues.length; index += 1) {
+        randomValues[index] = Math.floor(Math.random() * 4294967296);
+      }
+    }
+
+    const chunks = [];
+    for (let index = 0; index < randomValues.length; index += 1) {
+      if (index > 0 && index % 4 === 0) chunks.push('-');
+      chunks.push(chars[randomValues[index] % chars.length]);
+    }
+
+    return `WC-${chunks.join('')}`;
+  }
+
+  function setVisibleSyncCode(syncCode) {
+    if (!elements.syncCodeDisplay || !elements.currentSyncCode) return;
+
+    elements.syncCodeDisplay.hidden = !syncCode;
+    elements.currentSyncCode.textContent = syncCode || '';
+  }
+
+  function getCloudDestinationText() {
+    const firebaseConfig = getFirebaseConfig();
+
+    if (!cloudState.configured) return t('cloudNeedsConfig');
+    if (!cloudState.syncCode || !cloudState.docId) return t('cloudDestinationNotReady');
+
+    return t('cloudDestinationReady', {
+      projectId: firebaseConfig.projectId,
+      collectionName: getCloudCollectionName(),
+      docId: cloudState.docId
+    });
+  }
+
+  function renderCloudDestination() {
+    if (!elements.cloudDestinationText) return;
+
+    const firebaseConfig = getFirebaseConfig();
+    const hasDestination = Boolean(cloudState.configured && cloudState.syncCode && cloudState.docId);
+
+    elements.cloudDestinationText.textContent = getCloudDestinationText();
+
+    if (!elements.cloudConsoleLink) return;
+
+    elements.cloudConsoleLink.hidden = !hasDestination;
+    if (hasDestination) {
+      const path = `~2F${encodeURIComponent(getCloudCollectionName())}~2F${encodeURIComponent(cloudState.docId)}`;
+      elements.cloudConsoleLink.href = `https://console.firebase.google.com/project/${encodeURIComponent(firebaseConfig.projectId)}/firestore/data/${path}`;
+    } else {
+      elements.cloudConsoleLink.href = '#';
+    }
+  }
+
+  async function prepareCloudIdentityForDisplay() {
+    if (!cloudState.configured || !cloudState.syncCode) {
+      renderCloudDestination();
+      return;
+    }
+
+    try {
+      await initializeCloudIdentity();
+    } catch (error) {
+      console.warn('准备云端同步位置失败：', error);
+    } finally {
+      renderCloudDestination();
+    }
+  }
+  
   function getFirebaseConfig() {
     return cloudConfig.firebase || {};
   }
@@ -542,7 +643,9 @@
     elements.cloudSyncButton.disabled = true;
     elements.cloudConnectButton.disabled = !cloudState.configured || cloudState.syncing;
     elements.cloudCodeInput.disabled = !cloudState.configured || cloudState.syncing;
+    elements.cloudCreateButton.disabled = !cloudState.configured || cloudState.syncing;
     elements.cloudDisconnectButton.hidden = !connected;
+    setVisibleSyncCode(cloudState.syncCode);
 
     if (!cloudState.configured) {
       statusText = t('cloudNeedsConfig');
@@ -569,6 +672,7 @@
     elements.cloudStatus.textContent = statusText;
     elements.cloudSyncPanel.dataset.state = state;
     elements.cloudDot.className = `cloud-dot ${state}`;
+    renderCloudDestination();
   }
 
   function updateClock() {
@@ -1036,6 +1140,7 @@
     cloudState.lastSyncedAt = null;
     cloudState.error = '';
     saveCloudSettings();
+    setVisibleSyncCode(syncCode);
     updateConnectionStatus();
     await syncCloud();
   }
@@ -1047,14 +1152,75 @@
     cloudState.lastSyncedAt = null;
     cloudState.error = '';
     elements.cloudCodeInput.value = '';
+    setVisibleSyncCode('');
     saveCloudSettings();
     updateConnectionStatus();
     showToast(t('cloudDisconnected'));
   }
 
+  async function copyText(text) {
+    if (!text) return false;
+
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    } catch (error) {
+      // Fall back to a temporary text field below.
+    }
+
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.top = '-999px';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+
+    try {
+      return document.execCommand('copy');
+    } catch (error) {
+      return false;
+    } finally {
+      textarea.remove();
+    }
+  }
+
+  async function createSyncCode() {
+    if (!cloudState.configured) {
+      showToast(t('cloudConfigMissing'));
+      return;
+    }
+
+    const syncCode = generateSyncCode();
+    cloudState.syncCode = syncCode;
+    cloudState.docId = null;
+    cloudState.cryptoKey = null;
+    cloudState.lastSyncedAt = null;
+    cloudState.error = '';
+    elements.cloudCodeInput.value = syncCode;
+    setVisibleSyncCode(syncCode);
+    saveCloudSettings();
+    await prepareCloudIdentityForDisplay();
+    updateConnectionStatus();
+
+    const copied = await copyText(syncCode);
+    showToast(copied ? t('syncCodeGenerated') + ' · ' + t('syncCodeCopied') : t('syncCodeGenerated'));
+  }
+
+  async function copyCurrentSyncCode() {
+    const syncCode = cloudState.syncCode || elements.cloudCodeInput.value.trim();
+    const copied = await copyText(syncCode);
+    showToast(copied ? t('syncCodeCopied') : t('copySyncCodeFailed'));
+  }
+
   function bootCloudSync() {
     if (cloudState.syncCode) {
       elements.cloudCodeInput.value = cloudState.syncCode;
+      setVisibleSyncCode(cloudState.syncCode);
+      prepareCloudIdentityForDisplay();
     }
 
     renderCloudControls();
@@ -1100,6 +1266,8 @@
   elements.exportButton.addEventListener('click', exportCSV);
   elements.cloudConnectButton.addEventListener('click', connectCloud);
   elements.cloudDisconnectButton.addEventListener('click', disconnectCloud);
+  elements.cloudCreateButton.addEventListener('click', createSyncCode);
+  elements.copySyncCodeButton.addEventListener('click', copyCurrentSyncCode);
   elements.cloudSyncButton.addEventListener('click', () => syncCloud());
   elements.languageOptions.forEach((button) => {
     button.addEventListener('click', () => {

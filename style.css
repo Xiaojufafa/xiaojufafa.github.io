@@ -392,7 +392,7 @@ h2 {
 
 .cloud-form {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
   gap: 8px;
 }
 
@@ -409,6 +409,52 @@ h2 {
 
 .cloud-input:focus {
   border-color: rgba(10, 132, 255, 0.7);
+}
+
+.sync-code-display,
+.cloud-destination {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--card-strong);
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.sync-code-display[hidden] {
+  display: none;
+}
+
+.sync-code-display strong,
+.cloud-destination strong {
+  min-width: 0;
+  color: var(--text);
+  font-weight: 760;
+  overflow-wrap: anywhere;
+}
+
+.sync-code-display strong {
+  flex: 1;
+}
+
+.sync-code-display .text-button {
+  flex: none;
+}
+
+.cloud-console-link {
+  flex: none;
+  color: var(--blue-strong);
+  font-weight: 760;
+  text-decoration: none;
+}
+
+.cloud-console-link:hover {
+  text-decoration: underline;
 }
 
 .history-list {
@@ -588,5 +634,11 @@ h2 {
 
   .cloud-form {
     grid-template-columns: 1fr;
+  }
+
+  .sync-code-display,
+  .cloud-destination {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'work-clock-cache-v1.2.0';
+const CACHE_NAME = 'work-clock-cache-v1.3.0';
 
 const APP_SHELL = [
   './',
