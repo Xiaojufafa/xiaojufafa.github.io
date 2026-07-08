@@ -193,6 +193,7 @@
     cloudConnectButton: $('#cloudConnectButton'),
     cloudDisconnectButton: $('#cloudDisconnectButton'),
     cloudCodeInput: $('#cloudCodeInput'),
+    cloudCreateButton: $('#cloudCreateButton'),
     cloudStatus: $('#cloudStatus'),
     cloudDot: $('#cloudDot'),
     cloudSyncPanel: $('#cloudSyncPanel'),
@@ -500,6 +501,21 @@
     }));
   }
 
+  function generateSyncCode() {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    let code = "WC-";  
+    for (let i = 0; i < 16; i++) {  
+      if (i === 4 || i === 8 || i === 12) {
+        code += "-";
+      }  
+      
+      code += chars[
+        Math.floor(Math.random() * chars.length)
+      ];  
+    }  
+    return code;
+  }
+  
   function getFirebaseConfig() {
     return cloudConfig.firebase || {};
   }
@@ -1100,6 +1116,17 @@
   elements.exportButton.addEventListener('click', exportCSV);
   elements.cloudConnectButton.addEventListener('click', connectCloud);
   elements.cloudDisconnectButton.addEventListener('click', disconnectCloud);
+  elements.cloudCreateButton.addEventListener(
+  'click',
+  async()=>{
+    const code = generateSyncCode();  
+    cloudState.syncCode = code;  
+    saveCloudSettings();  
+    elements.cloudCodeInput.value = code;  
+    await initializeCloudIdentity();  
+    await syncCloud();  
+    showToast("同步码已生成");  
+  });
   elements.cloudSyncButton.addEventListener('click', () => syncCloud());
   elements.languageOptions.forEach((button) => {
     button.addEventListener('click', () => {
