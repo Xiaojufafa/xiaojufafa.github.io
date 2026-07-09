@@ -394,7 +394,7 @@ h2 {
 
 .cloud-form {
   display: grid;
-  grid-template-columns: minmax(180px, 1fr) minmax(92px, auto) minmax(92px, auto);
+  grid-template-columns: minmax(260px, 1fr) auto auto auto;
   gap: 10px;
   align-items: stretch;
 }
@@ -416,11 +416,9 @@ h2 {
 }
 
 #cloudDisconnectButton {
-  grid-column: 1 / -1;
   justify-self: start;
 }
 
-.sync-code-display,
 .cloud-destination {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
@@ -436,15 +434,6 @@ h2 {
   line-height: 1.35;
 }
 
-.cloud-destination {
-  grid-template-columns: auto minmax(0, 1fr);
-}
-
-.sync-code-display[hidden] {
-  display: none;
-}
-
-.sync-code-display strong,
 .cloud-destination strong {
   min-width: 0;
   color: var(--text);
@@ -453,18 +442,8 @@ h2 {
   word-break: break-word;
 }
 
-.sync-code-display strong {
-  align-self: center;
-}
-
-.sync-code-display .text-button {
-  justify-self: end;
-  align-self: center;
-}
-
 .cloud-console-link {
-  grid-column: 2;
-  justify-self: start;
+  justify-self: end;
   color: var(--blue-strong);
   font-weight: 760;
   text-decoration: none;
@@ -653,12 +632,10 @@ h2 {
     grid-template-columns: 1fr;
   }
 
-  .sync-code-display,
   .cloud-destination {
     grid-template-columns: 1fr;
   }
 
-  .sync-code-display .text-button,
   .cloud-console-link {
     grid-column: 1;
     justify-self: start;

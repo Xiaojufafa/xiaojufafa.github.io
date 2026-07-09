@@ -33,8 +33,6 @@
     cloudDisconnectButton: $('#cloudDisconnectButton'),
     cloudCodeInput: $('#cloudCodeInput'),
     cloudCreateButton: $('#cloudCreateButton'),
-    syncCodeDisplay: $('#syncCodeDisplay'),
-    currentSyncCode: $('#currentSyncCode'),
     copySyncCodeButton: $('#copySyncCodeButton'),
     cloudDestinationText: $('#cloudDestinationText'),
     cloudConsoleLink: $('#cloudConsoleLink'),
@@ -327,11 +325,6 @@
     }
   }
 
-  function setVisibleSyncCode(syncCode) {
-    elements.syncCodeDisplay.hidden = !syncCode;
-    elements.currentSyncCode.textContent = syncCode || '';
-  }
-
   async function sha256Hex(text) {
     const data = new TextEncoder().encode(text);
     const hash = await crypto.subtle.digest('SHA-256', data);
@@ -437,8 +430,8 @@
     elements.cloudConnectButton.disabled = !cloudState.configured || cloudState.syncing;
     elements.cloudCodeInput.disabled = !cloudState.configured || cloudState.syncing;
     elements.cloudCreateButton.disabled = !cloudState.configured || cloudState.syncing;
+    elements.copySyncCodeButton.disabled = !cloudState.syncCode && !elements.cloudCodeInput.value.trim();
     elements.cloudDisconnectButton.hidden = !connected;
-    setVisibleSyncCode(cloudState.syncCode);
 
     if (!cloudState.configured) {
       statusText = '需要 cloud-config.js';
@@ -841,7 +834,6 @@
     cloudState.lastSyncedAt = null;
     cloudState.error = '';
     elements.cloudCodeInput.value = syncCode;
-    setVisibleSyncCode(syncCode);
     saveCloudSettings();
     await prepareCloudIdentityForDisplay();
     updateConnectionStatus();
@@ -887,7 +879,6 @@
     cloudState.lastSyncedAt = null;
     cloudState.error = '';
     elements.cloudCodeInput.value = '';
-    setVisibleSyncCode('');
     saveCloudSettings();
     updateConnectionStatus();
     showToast('已断开云端同步');
@@ -896,7 +887,6 @@
   function bootCloudSync() {
     if (cloudState.syncCode) {
       elements.cloudCodeInput.value = cloudState.syncCode;
-      setVisibleSyncCode(cloudState.syncCode);
       prepareCloudIdentityForDisplay();
     }
 
@@ -949,6 +939,7 @@
   elements.cloudCodeInput.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') connectCloud();
   });
+  elements.cloudCodeInput.addEventListener('input', renderCloudControls);
   elements.historyList.addEventListener('click', (event) => {
     const button = event.target.closest('.delete-history-btn');
     if (!button) return;
