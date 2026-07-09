@@ -24,10 +24,16 @@
     <header class="topbar" aria-label="应用顶部信息" data-i18n-aria-label="topbarAria">
       <div>
         <p class="eyebrow" id="connectionStatus">本地离线存储</p>
-        <h1>公主请上班！</h1>
+        <h1 data-i18n="appHeading">公主请上班！</h1>
       </div>
-      <div class="clock-pill" aria-live="polite">
-        <span id="currentTime">--:--</span>
+      <div class="topbar-actions">
+        <div class="language-switch" role="group" aria-label="切换语言" data-i18n-aria-label="languageSwitchAria">
+          <button class="language-option active" data-language="zh" type="button" aria-pressed="true">中</button>
+          <button class="language-option" data-language="en" type="button" aria-pressed="false">EN</button>
+        </div>
+        <div class="clock-pill" aria-live="polite">
+          <span id="currentTime">--:--</span>
+        </div>
       </div>
     </header>
 
