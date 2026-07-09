@@ -341,12 +341,14 @@ h2 {
 
 .cloud-sync {
   display: grid;
-  gap: 12px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
   margin-bottom: 14px;
-  padding: 12px;
+  padding: 16px;
   border: 1px solid var(--line);
   border-radius: 18px;
   background: rgba(10, 132, 255, 0.06);
+  overflow: hidden;
 }
 
 .cloud-sync-status {
@@ -392,13 +394,15 @@ h2 {
 
 .cloud-form {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto auto;
-  gap: 8px;
+  grid-template-columns: minmax(180px, 1fr) minmax(92px, auto) minmax(92px, auto);
+  gap: 10px;
+  align-items: stretch;
 }
 
 .cloud-input {
   min-width: 0;
-  min-height: 40px;
+  width: 100%;
+  min-height: 44px;
   padding: 0 12px;
   border: 1px solid var(--line);
   border-radius: 14px;
@@ -411,19 +415,29 @@ h2 {
   border-color: rgba(10, 132, 255, 0.7);
 }
 
+#cloudDisconnectButton {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+
 .sync-code-display,
 .cloud-destination {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 8px 10px;
   min-width: 0;
-  padding: 10px;
+  padding: 12px;
   border: 1px solid var(--line);
   border-radius: 14px;
   background: var(--card-strong);
   color: var(--muted);
   font-size: 13px;
   line-height: 1.35;
+}
+
+.cloud-destination {
+  grid-template-columns: auto minmax(0, 1fr);
 }
 
 .sync-code-display[hidden] {
@@ -436,18 +450,21 @@ h2 {
   color: var(--text);
   font-weight: 760;
   overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .sync-code-display strong {
-  flex: 1;
+  align-self: center;
 }
 
 .sync-code-display .text-button {
-  flex: none;
+  justify-self: end;
+  align-self: center;
 }
 
 .cloud-console-link {
-  flex: none;
+  grid-column: 2;
+  justify-self: start;
   color: var(--blue-strong);
   font-weight: 760;
   text-decoration: none;
@@ -638,7 +655,20 @@ h2 {
 
   .sync-code-display,
   .cloud-destination {
-    align-items: flex-start;
-    flex-direction: column;
+    grid-template-columns: 1fr;
+  }
+
+  .sync-code-display .text-button,
+  .cloud-console-link {
+    grid-column: 1;
+    justify-self: start;
+  }
+
+  .history-item {
+    grid-template-columns: 1fr;
+  }
+
+  .history-actions {
+    justify-content: space-between;
   }
 }
