@@ -187,7 +187,7 @@
       languageSwitchAria: 'Change language',
       languageOptionChinese: 'Switch to Chinese',
       languageOptionEnglish: 'Switch to English',
-      appHeading: 'Princess, time for work!',
+      appHeading: ''Let's start work~'',
       todayEyebrow: 'Today',
       summaryAria: "Today's clock summary",
       clockInLabel: 'Clock in',
