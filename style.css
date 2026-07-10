@@ -335,6 +335,11 @@ h2 {
   padding: 20px;
 }
 
+.summary-card {
+  margin-top: 16px;
+  overflow: hidden;
+}
+
 .section-heading {
   display: flex;
   align-items: flex-start;
@@ -720,6 +725,198 @@ h2 {
   white-space: nowrap;
 }
 
+.summary-rate {
+  padding: 7px 10px;
+  border-radius: 999px;
+  color: var(--green);
+  background: rgba(52, 199, 89, 0.11);
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.summary-toggle {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px;
+  color: var(--text);
+  background: transparent;
+  text-align: left;
+}
+
+.summary-toggle > span:first-child {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+
+.summary-toggle-title {
+  font-size: 22px;
+  font-weight: 750;
+  letter-spacing: -0.025em;
+}
+
+.summary-toggle-meta {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+}
+
+.summary-details {
+  padding: 0 20px 20px;
+}
+
+.period-summary-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.period-panel {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--card-strong);
+}
+
+.period-panel-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.period-panel h3 {
+  margin: 3px 0 0;
+  font-size: 18px;
+  letter-spacing: -0.018em;
+}
+
+.pay-status {
+  flex: none;
+  padding: 7px 10px;
+  border-radius: 999px;
+  color: var(--orange);
+  background: rgba(255, 159, 10, 0.1);
+  font-size: 13px;
+  font-weight: 780;
+  white-space: nowrap;
+}
+
+.pay-status.paid {
+  color: var(--green);
+  background: rgba(52, 199, 89, 0.12);
+}
+
+.summary-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.summary-metrics div {
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(10, 132, 255, 0.05);
+}
+
+.summary-metrics span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 680;
+}
+
+.summary-metrics strong {
+  display: block;
+  margin-top: 5px;
+  font-size: 18px;
+  font-weight: 820;
+  letter-spacing: -0.025em;
+  overflow-wrap: anywhere;
+}
+
+.month-calendar {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.calendar-day {
+  display: grid;
+  aspect-ratio: 1;
+  min-width: 0;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--muted);
+  background: rgba(128, 128, 128, 0.05);
+  font-size: 12px;
+  font-weight: 760;
+}
+
+.calendar-day.worked {
+  border-color: rgba(52, 199, 89, 0.52);
+  color: #ffffff;
+  background: var(--green);
+}
+
+.calendar-day.placeholder {
+  border-color: transparent;
+  background: transparent;
+}
+
+.year-calendar {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.year-month {
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  color: var(--muted);
+  background: rgba(128, 128, 128, 0.05);
+}
+
+.year-month.worked {
+  border-color: rgba(52, 199, 89, 0.42);
+  color: var(--text);
+  background: rgba(52, 199, 89, 0.12);
+}
+
+.year-month span,
+.year-month strong {
+  display: block;
+}
+
+.year-month span {
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.year-month strong {
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pay-toggle-button {
+  width: 100%;
+  margin-top: 12px;
+}
+
 .empty-state {
   padding: 22px 14px;
   border: 1px dashed var(--line);
@@ -799,6 +996,14 @@ h2 {
   .today-card,
   .history-card {
     padding: 16px;
+  }
+
+  .summary-toggle {
+    padding: 16px;
+  }
+
+  .summary-details {
+    padding: 0 16px 16px;
   }
 
   .action-row {
@@ -889,5 +1094,19 @@ h2 {
 
   .history-actions {
     justify-content: space-between;
+  }
+
+  .summary-metrics,
+  .year-calendar {
+    grid-template-columns: 1fr;
+  }
+
+  .period-panel-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .pay-status {
+    align-self: start;
   }
 }

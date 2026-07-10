@@ -5,8 +5,10 @@
   const CLOUD_SETTINGS_KEY = 'work-clock-cloud-settings-v1';
   const LANGUAGE_KEY = 'work-clock-language-v1';
   const ACCOUNT_KEY = 'work-clock-account-v1';
+  const PAID_MONTHS_KEY = 'work-clock-paid-months-v1';
   const DEFAULT_LANGUAGE = 'zh';
   const MAX_HISTORY_ITEMS = 60;
+  const HOURLY_RATE = 17;
   const CLOUD_CRYPTO_SALT = 'work-clock-cloud-sync-v1';
   const MANAGER_PASSWORD = '01222005';
   const FIREBASE_SDK_URLS = [
@@ -70,6 +72,25 @@
       durationMinutes: '{minutes}分钟',
       durationHours: '{hours}小时',
       durationHoursMinutes: '{hours}小时{minutes}分钟',
+      workSummaryEyebrow: '汇总',
+      workSummaryTitle: '工时与工资',
+      monthlySummaryLabel: '本月',
+      yearlySummaryLabel: '今年',
+      totalWorkHoursLabel: '总工时',
+      salaryDueLabel: '应付工资',
+      salaryTotalLabel: '工资合计',
+      compareLastMonthLabel: '对比上月',
+      compareLastYearLabel: '对比去年',
+      workDaysLabel: '{days} 天上班',
+      compareMore: '多 {duration}',
+      compareLess: '少 {duration}',
+      compareSame: '持平',
+      salaryPaid: '已发工资',
+      salaryUnpaid: '月底待发',
+      markMonthPaidButton: '标记本月已发工资',
+      markMonthUnpaidButton: '取消本月已发工资',
+      salaryMarkedPaid: '本月工资已标记为已发',
+      salaryMarkedUnpaid: '本月工资已取消已发标记',
       alreadyClockedIn: '今天已经上班打卡了',
       clockInSuccess: '上班打卡成功：{time}',
       clockInFirst: '请先完成上班打卡',
@@ -80,6 +101,8 @@
       csvClockInHeader: '上班时间',
       csvClockOutHeader: '下班时间',
       csvDurationHeader: '工时',
+      csvMonthCompareHeader: '当月对比上月',
+      csvYearCompareHeader: '当年对比去年',
       csvNoRecords: '暂无记录可导出',
       csvReady: 'CSV 已生成',
       cryptoUnsupported: '当前浏览器不支持加密同步',
@@ -211,6 +234,25 @@
       durationMinutes: '{minutes} min',
       durationHours: '{hours} hr',
       durationHoursMinutes: '{hours} hr {minutes} min',
+      workSummaryEyebrow: 'Summary',
+      workSummaryTitle: 'Hours & Salary',
+      monthlySummaryLabel: 'This Month',
+      yearlySummaryLabel: 'This Year',
+      totalWorkHoursLabel: 'Total hours',
+      salaryDueLabel: 'Salary due',
+      salaryTotalLabel: 'Salary total',
+      compareLastMonthLabel: 'Vs last month',
+      compareLastYearLabel: 'Vs last year',
+      workDaysLabel: '{days} work days',
+      compareMore: '+ {duration}',
+      compareLess: '- {duration}',
+      compareSame: 'Same',
+      salaryPaid: 'Paid',
+      salaryUnpaid: 'Due end of month',
+      markMonthPaidButton: 'Mark this month paid',
+      markMonthUnpaidButton: 'Mark this month unpaid',
+      salaryMarkedPaid: 'This month is marked paid',
+      salaryMarkedUnpaid: 'This month is marked unpaid',
       alreadyClockedIn: 'Already clocked in today',
       clockInSuccess: 'Clocked in at {time}',
       clockInFirst: 'Please clock in first',
@@ -221,6 +263,8 @@
       csvClockInHeader: 'Clock-in time',
       csvClockOutHeader: 'Clock-out time',
       csvDurationHeader: 'Hours',
+      csvMonthCompareHeader: 'Month vs last month',
+      csvYearCompareHeader: 'Year vs last year',
       csvNoRecords: 'No records to export',
       csvReady: 'CSV generated',
       cryptoUnsupported: 'This browser does not support encrypted sync',
@@ -325,6 +369,20 @@
     todayDuration: $('#todayDuration'),
     clockInButton: $('#clockInButton'),
     clockOutButton: $('#clockOutButton'),
+    summaryToggleButton: $('#summaryToggleButton'),
+    summaryDetails: $('#summaryDetails'),
+    summaryArrow: $('#summaryArrow'),
+    salaryRate: $('#salaryRate'),
+    monthSummaryTitle: $('#monthSummaryTitle'),
+    monthlyPayStatus: $('#monthlyPayStatus'),
+    monthlyTotalHours: $('#monthlyTotalHours'),
+    monthlySalaryDue: $('#monthlySalaryDue'),
+    monthlyCalendar: $('#monthlyCalendar'),
+    markMonthPaidButton: $('#markMonthPaidButton'),
+    yearSummaryTitle: $('#yearSummaryTitle'),
+    yearlyTotalHours: $('#yearlyTotalHours'),
+    yearlySalaryDue: $('#yearlySalaryDue'),
+    yearlyCalendar: $('#yearlyCalendar'),
     historyList: $('#historyList'),
     exportButton: $('#exportButton'),
     installHint: $('#installHint'),
@@ -383,10 +441,12 @@
   let cloudSaveTimer = null;
   let currentLanguage = loadLanguage();
   let account = loadAccount();
+  let paidMonths = loadPaidMonths();
   let authenticated = false;
   let managerModeOpen = false;
   let managerUnlocked = false;
   let cloudDetailsOpen = false;
+  let summaryOpen = false;
 
   function pad(value) {
     return String(value).padStart(2, '0');
@@ -444,12 +504,35 @@
     localStorage.setItem(ACCOUNT_KEY, JSON.stringify(account));
   }
 
+  function loadPaidMonths() {
+    try {
+      const raw = localStorage.getItem(PAID_MONTHS_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return new Set(Array.isArray(parsed) ? parsed.filter((item) => typeof item === 'string') : []);
+    } catch (error) {
+      return new Set();
+    }
+  }
+
+  function savePaidMonths() {
+    localStorage.setItem(PAID_MONTHS_KEY, JSON.stringify([...paidMonths].sort()));
+  }
+
+  function persistPaidMonths() {
+    savePaidMonths();
+    queueCloudSave();
+  }
+
   function isFourDigitPassword(value) {
     return /^\d{4}$/.test(value);
   }
 
   function getDateKey(date) {
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+  }
+
+  function getMonthKey(date) {
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}`;
   }
 
   function parseDateKey(dateKey) {
@@ -507,6 +590,37 @@
     if (hours <= 0) return t('durationMinutes', { minutes });
     if (minutes === 0) return t('durationHours', { hours });
     return t('durationHoursMinutes', { hours, minutes });
+  }
+
+  function formatDecimalHours(totalMinutes) {
+    if (!Number.isFinite(totalMinutes) || totalMinutes <= 0) return '0.00';
+    return (totalMinutes / 60).toFixed(2);
+  }
+
+  function formatMoney(amount) {
+    return new Intl.NumberFormat(t('locale'), {
+      style: 'currency',
+      currency: 'USD'
+    }).format(amount);
+  }
+
+  function formatCompareMinutes(diffMinutes) {
+    if (!Number.isFinite(diffMinutes) || diffMinutes === 0) return t('compareSame');
+    const duration = formatMinutesDuration(Math.abs(diffMinutes));
+    return diffMinutes > 0 ? t('compareMore', { duration }) : t('compareLess', { duration });
+  }
+
+  function formatMonthTitle(year, monthIndex) {
+    return new Date(year, monthIndex, 1).toLocaleDateString(t('locale'), {
+      year: 'numeric',
+      month: 'long'
+    });
+  }
+
+  function formatYearTitle(year) {
+    return new Date(year, 0, 1).toLocaleDateString(t('locale'), {
+      year: 'numeric'
+    });
   }
 
   function getRecordSessions(record) {
@@ -723,6 +837,7 @@
     elements.durationEditor.hidden = true;
     elements.managerModeButton.classList.toggle('active', managerModeOpen);
     elements.managerModeButton.setAttribute('aria-pressed', String(managerModeOpen));
+    renderWorkSummary();
   }
 
   function renderCloudDetails() {
@@ -734,6 +849,17 @@
   function toggleCloudDetails() {
     cloudDetailsOpen = !cloudDetailsOpen;
     renderCloudDetails();
+  }
+
+  function renderSummaryFold() {
+    elements.summaryDetails.hidden = !summaryOpen;
+    elements.summaryToggleButton.setAttribute('aria-expanded', String(summaryOpen));
+    elements.summaryArrow.classList.toggle('open', summaryOpen);
+  }
+
+  function toggleSummaryFold() {
+    summaryOpen = !summaryOpen;
+    renderSummaryFold();
   }
 
   function renderAuthGate() {
@@ -1214,6 +1340,111 @@
       .sort((a, b) => b.date.localeCompare(a.date));
   }
 
+  function getWorkRecords() {
+    return getVisibleRecords().filter((record) => getDurationMinutes(record) > 0);
+  }
+
+  function getMonthSummary(year, monthIndex) {
+    const prefix = `${year}-${pad(monthIndex + 1)}-`;
+    const workRecords = getWorkRecords().filter((record) => record.date.startsWith(prefix));
+    const totalMinutes = workRecords.reduce((total, record) => total + getDurationMinutes(record), 0);
+
+    return {
+      totalMinutes,
+      workDates: new Set(workRecords.map((record) => record.date))
+    };
+  }
+
+  function getYearSummary(year) {
+    const prefix = `${year}-`;
+    const workRecords = getWorkRecords().filter((record) => record.date.startsWith(prefix));
+    const totalMinutes = workRecords.reduce((total, record) => total + getDurationMinutes(record), 0);
+    const monthDayCounts = Array.from({ length: 12 }, () => 0);
+
+    workRecords.forEach((record) => {
+      const [, month] = record.date.split('-').map(Number);
+      if (month >= 1 && month <= 12) monthDayCounts[month - 1] += 1;
+    });
+
+    return {
+      totalMinutes,
+      monthDayCounts
+    };
+  }
+
+  function renderMonthCalendar(year, monthIndex, workDates) {
+    const firstDay = new Date(year, monthIndex, 1);
+    const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+    const leadingDays = firstDay.getDay();
+    const cells = [];
+
+    for (let index = 0; index < leadingDays; index += 1) {
+      cells.push('<span class="calendar-day placeholder" aria-hidden="true"></span>');
+    }
+
+    for (let day = 1; day <= daysInMonth; day += 1) {
+      const dateKey = `${year}-${pad(monthIndex + 1)}-${pad(day)}`;
+      const worked = workDates.has(dateKey);
+      cells.push(`<span class="calendar-day ${worked ? 'worked' : ''}" title="${dateKey}">${day}</span>`);
+    }
+
+    elements.monthlyCalendar.innerHTML = cells.join('');
+  }
+
+  function renderYearCalendar(year, monthDayCounts) {
+    elements.yearlyCalendar.innerHTML = monthDayCounts.map((days, index) => {
+      const monthName = new Date(year, index, 1).toLocaleDateString(t('locale'), { month: 'short' });
+      return `
+        <div class="year-month ${days > 0 ? 'worked' : ''}">
+          <span>${monthName}</span>
+          <strong>${t('workDaysLabel', { days })}</strong>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderWorkSummary() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const monthIndex = now.getMonth();
+    const currentMonth = getMonthSummary(year, monthIndex);
+    const currentYear = getYearSummary(year);
+    const currentMonthKey = getMonthKey(now);
+    const monthPaid = paidMonths.has(currentMonthKey);
+
+    elements.salaryRate.textContent = `${formatMoney(HOURLY_RATE)} / ${t('hoursLabel')}`;
+    elements.monthSummaryTitle.textContent = formatMonthTitle(year, monthIndex);
+    elements.monthlyTotalHours.textContent = `${formatDecimalHours(currentMonth.totalMinutes)} ${t('hoursLabel')}`;
+    elements.monthlySalaryDue.textContent = formatMoney((currentMonth.totalMinutes / 60) * HOURLY_RATE);
+    elements.monthlyPayStatus.textContent = t(monthPaid ? 'salaryPaid' : 'salaryUnpaid');
+    elements.monthlyPayStatus.classList.toggle('paid', monthPaid);
+    elements.markMonthPaidButton.hidden = !managerUnlocked;
+    elements.markMonthPaidButton.textContent = t(monthPaid ? 'markMonthUnpaidButton' : 'markMonthPaidButton');
+
+    renderMonthCalendar(year, monthIndex, currentMonth.workDates);
+
+    elements.yearSummaryTitle.textContent = formatYearTitle(year);
+    elements.yearlyTotalHours.textContent = `${formatDecimalHours(currentYear.totalMinutes)} ${t('hoursLabel')}`;
+    elements.yearlySalaryDue.textContent = formatMoney((currentYear.totalMinutes / 60) * HOURLY_RATE);
+
+    renderYearCalendar(year, currentYear.monthDayCounts);
+  }
+
+  function getRecordMonthCompare(record) {
+    const date = parseDateKey(record.date);
+    const previousMonthDate = new Date(date.getFullYear(), date.getMonth() - 1, 1);
+    const currentMonth = getMonthSummary(date.getFullYear(), date.getMonth());
+    const previousMonth = getMonthSummary(previousMonthDate.getFullYear(), previousMonthDate.getMonth());
+    return formatCompareMinutes(currentMonth.totalMinutes - previousMonth.totalMinutes);
+  }
+
+  function getRecordYearCompare(record) {
+    const date = parseDateKey(record.date);
+    const currentYear = getYearSummary(date.getFullYear());
+    const previousYear = getYearSummary(date.getFullYear() - 1);
+    return formatCompareMinutes(currentYear.totalMinutes - previousYear.totalMinutes);
+  }
+
   function renderHistory() {
     const visibleRecords = getVisibleRecords();
 
@@ -1246,10 +1477,12 @@
 
   function render() {
     renderToday();
+    renderWorkSummary();
     renderHistory();
     renderInstallHint();
     renderCloudControls();
     renderCloudDetails();
+    renderSummaryFold();
   }
 
   function clockIn() {
@@ -1414,12 +1647,21 @@
 
   function exportCSV() {
     const rows = [
-      [t('csvDateHeader'), t('csvClockInHeader'), t('csvClockOutHeader'), t('csvDurationHeader')],
+      [
+        t('csvDateHeader'),
+        t('csvClockInHeader'),
+        t('csvClockOutHeader'),
+        t('csvDurationHeader'),
+        t('csvMonthCompareHeader'),
+        t('csvYearCompareHeader')
+      ],
       ...getVisibleRecords().map((record) => [
         record.date,
         formatTime(getRecordClockIn(record)),
         formatTime(getRecordClockOut(record)),
-        formatDuration(record)
+        formatDuration(record),
+        getRecordMonthCompare(record),
+        getRecordYearCompare(record)
       ])
     ];
 
@@ -1467,9 +1709,10 @@
 
   async function encryptCloudRecords() {
     const payload = JSON.stringify({
-      version: 1,
+      version: 2,
       savedAt: new Date().toISOString(),
-      records: serializeRecordsForCloud()
+      records: serializeRecordsForCloud(),
+      paidMonths: [...paidMonths].sort()
     });
     const iv = crypto.getRandomValues(new Uint8Array(12));
     const encrypted = await crypto.subtle.encrypt(
@@ -1485,7 +1728,7 @@
   }
 
   async function decryptCloudRecords(encryptedPayload) {
-    if (!encryptedPayload?.iv || !encryptedPayload?.data) return [];
+    if (!encryptedPayload?.iv || !encryptedPayload?.data) return { records: [], paidMonths: [] };
 
     try {
       const decrypted = await crypto.subtle.decrypt(
@@ -1494,7 +1737,10 @@
         base64ToBytes(encryptedPayload.data)
       );
       const parsed = JSON.parse(new TextDecoder().decode(decrypted));
-      return Array.isArray(parsed.records) ? parsed.records.map(normalizeRecord).filter(Boolean) : [];
+      return {
+        records: Array.isArray(parsed.records) ? parsed.records.map(normalizeRecord).filter(Boolean) : [],
+        paidMonths: Array.isArray(parsed.paidMonths) ? parsed.paidMonths.filter((item) => typeof item === 'string') : []
+      };
     } catch (error) {
       throw new Error(t('cloudBadSyncCode'));
     }
@@ -1596,10 +1842,14 @@
       const db = await ensureFirebase();
       const documentRef = db.collection(getCloudCollectionName()).doc(cloudState.docId);
       const snapshot = await documentRef.get();
-      const remoteRecords = snapshot.exists ? await decryptCloudRecords(snapshot.data().encrypted) : [];
+      const remotePayload = snapshot.exists
+        ? await decryptCloudRecords(snapshot.data().encrypted)
+        : { records: [], paidMonths: [] };
 
-      records = mergeRecords(records, remoteRecords);
+      records = mergeRecords(records, remotePayload.records);
+      paidMonths = new Set([...paidMonths, ...remotePayload.paidMonths]);
       saveRecords();
+      savePaidMonths();
       render();
 
       await documentRef.set({
@@ -1716,6 +1966,24 @@
     showToast(t('cloudDisconnected'));
   }
 
+  function toggleCurrentMonthPaid() {
+    if (!requireManagerPassword()) return;
+
+    const monthKey = getMonthKey(new Date());
+    if (paidMonths.has(monthKey)) {
+      paidMonths.delete(monthKey);
+      persistPaidMonths();
+      renderWorkSummary();
+      showToast(t('salaryMarkedUnpaid'));
+      return;
+    }
+
+    paidMonths.add(monthKey);
+    persistPaidMonths();
+    renderWorkSummary();
+    showToast(t('salaryMarkedPaid'));
+  }
+
   function bootCloudSync() {
     if (cloudState.syncCode) {
       elements.cloudCodeInput.value = cloudState.syncCode;
@@ -1789,6 +2057,8 @@
   elements.resetClockInButton.addEventListener('click', resetClockInToday);
   elements.editDurationButton.addEventListener('click', openDurationEditor);
   elements.durationEditor.addEventListener('submit', saveManualDuration);
+  elements.summaryToggleButton.addEventListener('click', toggleSummaryFold);
+  elements.markMonthPaidButton.addEventListener('click', toggleCurrentMonthPaid);
   elements.exportButton.addEventListener('click', exportCSV);
   elements.cloudToggleButton.addEventListener('click', toggleCloudDetails);
   elements.cloudCreateButton.addEventListener('click', createSyncCode);

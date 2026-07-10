@@ -159,6 +159,65 @@
         <p class="hint" id="installHint" data-i18n="installHint">在 iPhone Safari 中点击“分享” → “添加到主屏幕”，即可像 App 一样使用。</p>
       </section>
 
+      <section class="card summary-card" aria-labelledby="workSummaryTitle">
+        <button class="summary-toggle" id="summaryToggleButton" type="button" aria-expanded="false" aria-controls="summaryDetails">
+          <span>
+            <span class="eyebrow" data-i18n="workSummaryEyebrow">汇总</span>
+            <span class="summary-toggle-title" id="workSummaryTitle" data-i18n="workSummaryTitle">工时与工资</span>
+          </span>
+          <span class="summary-toggle-meta">
+            <span class="summary-rate" id="salaryRate">$17 / 小时</span>
+            <span class="cloud-arrow" id="summaryArrow" aria-hidden="true">⌄</span>
+          </span>
+        </button>
+
+        <div class="summary-details" id="summaryDetails" hidden>
+          <div class="period-summary-grid">
+            <article class="period-panel" aria-labelledby="monthSummaryTitle">
+              <div class="period-panel-heading">
+                <div>
+                  <p class="eyebrow" data-i18n="monthlySummaryLabel">本月</p>
+                  <h3 id="monthSummaryTitle">--</h3>
+                </div>
+                <span class="pay-status" id="monthlyPayStatus">--</span>
+              </div>
+              <div class="summary-metrics">
+                <div>
+                  <span data-i18n="totalWorkHoursLabel">总工时</span>
+                  <strong id="monthlyTotalHours">--</strong>
+                </div>
+                <div>
+                  <span data-i18n="salaryDueLabel">应付工资</span>
+                  <strong id="monthlySalaryDue">--</strong>
+                </div>
+              </div>
+              <div class="month-calendar" id="monthlyCalendar" aria-label="Monthly work calendar"></div>
+              <button class="text-button pay-toggle-button" id="markMonthPaidButton" type="button" hidden data-i18n="markMonthPaidButton">标记本月已发工资</button>
+            </article>
+
+            <article class="period-panel" aria-labelledby="yearSummaryTitle">
+              <div class="period-panel-heading">
+                <div>
+                  <p class="eyebrow" data-i18n="yearlySummaryLabel">今年</p>
+                  <h3 id="yearSummaryTitle">--</h3>
+                </div>
+              </div>
+              <div class="summary-metrics">
+                <div>
+                  <span data-i18n="totalWorkHoursLabel">总工时</span>
+                  <strong id="yearlyTotalHours">--</strong>
+                </div>
+                <div>
+                  <span data-i18n="salaryTotalLabel">工资合计</span>
+                  <strong id="yearlySalaryDue">--</strong>
+                </div>
+              </div>
+              <div class="year-calendar" id="yearlyCalendar" aria-label="Yearly work calendar"></div>
+            </article>
+          </div>
+        </div>
+      </section>
+
       <section class="card history-card" aria-labelledby="historyTitle">
         <div class="section-heading compact">
           <div>
