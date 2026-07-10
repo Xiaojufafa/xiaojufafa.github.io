@@ -4,9 +4,11 @@
   const STORAGE_KEY = 'work-clock-records-v1';
   const CLOUD_SETTINGS_KEY = 'work-clock-cloud-settings-v1';
   const LANGUAGE_KEY = 'work-clock-language-v1';
+  const ACCOUNT_KEY = 'work-clock-account-v1';
   const DEFAULT_LANGUAGE = 'zh';
   const MAX_HISTORY_ITEMS = 60;
   const CLOUD_CRYPTO_SALT = 'work-clock-cloud-sync-v1';
+  const MANAGER_PASSWORD = '01222005';
   const FIREBASE_SDK_URLS = [
     'https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js',
     'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js'
@@ -101,6 +103,57 @@
       localRecordsLoadFailed: '读取本地记录失败：',
       cloudSyncFailedLog: '云端同步失败：',
       languageChanged: '已切换为中文'
+      ,
+      setupEyebrow: '第一次使用',
+      setupTitle: '设置账号',
+      setupCopy: '输入用户名和 4 位数字密码。同步码会自动和这个用户名连接。',
+      usernameLabel: '用户名',
+      passwordLabel: '4 位数字密码',
+      usernamePlaceholder: 'Jocelyn',
+      pinPlaceholder: '••••',
+      setupButton: '创建账号',
+      loginEyebrow: '欢迎回来',
+      loginTitle: '用户名',
+      nextButton: '下一步',
+      enterPasswordTitle: '输入密码',
+      clearButton: '清除',
+      backButton: '返回',
+      backspaceButton: '删除',
+      managerEyebrow: '老赖操控',
+      managerCopy: '受保护操作需要老赖操控密码。',
+      managerModeButton: '老赖操控',
+      managerPasswordPlaceholder: '密码',
+      managerPasswordLabel: '老赖操控密码',
+      managerUnlockButton: '开启',
+      resetClockInButton: '重新上班',
+      editDurationButton: '修改工时',
+      saveDurationButton: '保存',
+      workStartLabel: '开始',
+      workEndLabel: '结束',
+      workStartTwoLabel: '第二段开始',
+      workEndTwoLabel: '第二段结束',
+      hoursLabel: '小时',
+      minutesLabel: '分钟',
+      accountLabel: '账号',
+      signOutButton: '登出',
+      accountRequired: '请先完成账号设置',
+      usernameRequired: '请输入用户名',
+      passwordMustFour: '密码需要 4 位数字',
+      usernameMismatch: '用户名不正确',
+      passwordWrong: '密码不正确',
+      loginSuccess: '已登录',
+      signedOut: '已登出',
+      managerPasswordPrompt: '请输入老赖操控密码',
+      managerPasswordWrong: '老赖操控密码不正确',
+      managerModeOn: '老赖操控已开启',
+      managerModeOff: '老赖操控已隐藏',
+      managerUnlocked: '老赖操控已解锁',
+      resetClockInSuccess: '已重新开始上班打卡',
+      durationSaved: '今日工时已修改',
+      noDurationToEdit: '请先完成今天的上班打卡'
+      ,
+      invalidWorkTimeRange: '请检查开始和结束时间',
+      partialWorkTimeRange: '第二段需要同时填写开始和结束'
     },
     en: {
       htmlLang: 'en',
@@ -111,7 +164,7 @@
       languageSwitchAria: 'Change language',
       languageOptionChinese: 'Switch to Chinese',
       languageOptionEnglish: 'Switch to English',
-      appHeading: "Let's start work!",
+      appHeading: 'Princess, time for work!',
       todayEyebrow: 'Today',
       summaryAria: "Today's clock summary",
       clockInLabel: 'Clock in',
@@ -191,12 +244,78 @@
       localRecordsLoadFailed: 'Local records load failed:',
       cloudSyncFailedLog: 'Cloud sync failed:',
       languageChanged: 'Switched to English'
+      ,
+      setupEyebrow: 'First use',
+      setupTitle: 'Set Up Account',
+      setupCopy: 'Enter a username and 4 digit password. A sync code will be linked to this username.',
+      usernameLabel: 'Username',
+      passwordLabel: '4 digit Password',
+      usernamePlaceholder: 'Jocelyn',
+      pinPlaceholder: '••••',
+      setupButton: 'Create Account',
+      loginEyebrow: 'Welcome back',
+      loginTitle: 'Username',
+      nextButton: 'Next',
+      enterPasswordTitle: 'Enter Password',
+      clearButton: 'Clear',
+      backButton: 'Back',
+      backspaceButton: 'Delete',
+      managerEyebrow: 'Manager',
+      managerCopy: 'Protected actions need the Manager password.',
+      managerModeButton: 'Manager mode',
+      managerPasswordPlaceholder: 'Password',
+      managerPasswordLabel: 'Manager password',
+      managerUnlockButton: 'Unlock',
+      resetClockInButton: 'Clock in again',
+      editDurationButton: 'Edit hours',
+      saveDurationButton: 'Save',
+      workStartLabel: 'Start',
+      workEndLabel: 'End',
+      workStartTwoLabel: 'Second start',
+      workEndTwoLabel: 'Second end',
+      hoursLabel: 'Hours',
+      minutesLabel: 'Minutes',
+      accountLabel: 'Account',
+      signOutButton: 'Sign Out',
+      accountRequired: 'Please set up your account first',
+      usernameRequired: 'Please enter a username',
+      passwordMustFour: 'Password must be 4 digits',
+      usernameMismatch: 'Username does not match',
+      passwordWrong: 'Wrong password',
+      loginSuccess: 'Logged in',
+      signedOut: 'Signed out',
+      managerPasswordPrompt: 'Enter Manager password',
+      managerPasswordWrong: 'Wrong Manager password',
+      managerModeOn: 'Manager mode on',
+      managerModeOff: 'Manager mode hidden',
+      managerUnlocked: 'Manager mode unlocked',
+      resetClockInSuccess: 'Clock-in reset for another work session',
+      durationSaved: "Today's hours updated",
+      noDurationToEdit: 'Please clock in first today',
+      invalidWorkTimeRange: 'Please check the start and end times',
+      partialWorkTimeRange: 'Second range needs both start and end'
     }
   };
 
   const $ = (selector) => document.querySelector(selector);
 
   const elements = {
+    authShell: $('#authShell'),
+    appShell: $('#appShell'),
+    setupAccountView: $('#setupAccountView'),
+    loginUsernameView: $('#loginUsernameView'),
+    loginPasswordView: $('#loginPasswordView'),
+    setupAccountForm: $('#setupAccountForm'),
+    setupUsername: $('#setupUsername'),
+    setupPassword: $('#setupPassword'),
+    loginUsernameForm: $('#loginUsernameForm'),
+    loginUsername: $('#loginUsername'),
+    loginPasswordEyebrow: $('#loginPasswordEyebrow'),
+    loginPassword: $('#loginPassword'),
+    pinDots: $('#pinDots'),
+    pinBackButton: $('#pinBackButton'),
+    pinClearButton: $('#pinClearButton'),
+    backToUsernameButton: $('#backToUsernameButton'),
     connectionStatus: $('#connectionStatus'),
     currentTime: $('#currentTime'),
     todayTitle: $('#todayTitle'),
@@ -223,6 +342,23 @@
     cloudStatus: $('#cloudStatus'),
     cloudDot: $('#cloudDot'),
     cloudSyncPanel: $('#cloudSyncPanel'),
+    cloudToggleButton: $('#cloudToggleButton'),
+    cloudDetails: $('#cloudDetails'),
+    cloudArrow: $('#cloudArrow'),
+    accountName: $('#accountName'),
+    signOutButton: $('#signOutButton'),
+    managerModeButton: $('#managerModeButton'),
+    managerPanel: $('#managerPanel'),
+    managerUnlockForm: $('#managerUnlockForm'),
+    managerPasswordInput: $('#managerPasswordInput'),
+    managerActions: $('#managerActions'),
+    resetClockInButton: $('#resetClockInButton'),
+    editDurationButton: $('#editDurationButton'),
+    durationEditor: $('#durationEditor'),
+    workStartInput: $('#workStartInput'),
+    workEndInput: $('#workEndInput'),
+    workStartTwoInput: $('#workStartTwoInput'),
+    workEndTwoInput: $('#workEndTwoInput'),
     languageOptions: document.querySelectorAll('[data-language]')
   };
 
@@ -246,6 +382,11 @@
   let renderedDateKey = getDateKey(new Date());
   let cloudSaveTimer = null;
   let currentLanguage = loadLanguage();
+  let account = loadAccount();
+  let authenticated = false;
+  let managerModeOpen = false;
+  let managerUnlocked = false;
+  let cloudDetailsOpen = false;
 
   function pad(value) {
     return String(value).padStart(2, '0');
@@ -277,6 +418,36 @@
     }
   }
 
+  function loadAccount() {
+    try {
+      const raw = localStorage.getItem(ACCOUNT_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed.username !== 'string' || typeof parsed.password !== 'string') return null;
+      return {
+        username: parsed.username,
+        password: parsed.password,
+        syncCode: typeof parsed.syncCode === 'string' ? parsed.syncCode : '',
+        createdAt: parsed.createdAt || new Date().toISOString()
+      };
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function saveAccount() {
+    if (!account) {
+      localStorage.removeItem(ACCOUNT_KEY);
+      return;
+    }
+
+    localStorage.setItem(ACCOUNT_KEY, JSON.stringify(account));
+  }
+
+  function isFourDigitPassword(value) {
+    return /^\d{4}$/.test(value);
+  }
+
   function getDateKey(date) {
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
   }
@@ -293,6 +464,21 @@
       minute: '2-digit',
       hour12: false
     });
+  }
+
+  function formatInputTime(isoString) {
+    if (!isoString) return '';
+    const date = new Date(isoString);
+    if (Number.isNaN(date.getTime())) return '';
+    return `${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }
+
+  function timeInputToIso(dateKey, timeValue) {
+    if (!/^\d{2}:\d{2}$/.test(timeValue)) return null;
+    const [hour, minute] = timeValue.split(':').map(Number);
+    const date = parseDateKey(dateKey);
+    date.setHours(hour, minute, 0, 0);
+    return date.toISOString();
   }
 
   function formatDateTitle(dateKey) {
@@ -312,19 +498,69 @@
     });
   }
 
-  function formatDuration(clockIn, clockOut) {
-    if (!clockIn || !clockOut) return '--';
+  function formatMinutesDuration(totalMinutes) {
+    if (!Number.isFinite(totalMinutes) || totalMinutes <= 0) return t('durationZero');
 
-    const diff = new Date(clockOut).getTime() - new Date(clockIn).getTime();
-    if (!Number.isFinite(diff) || diff <= 0) return t('durationZero');
-
-    const totalMinutes = Math.round(diff / 60000);
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
 
     if (hours <= 0) return t('durationMinutes', { minutes });
     if (minutes === 0) return t('durationHours', { hours });
     return t('durationHoursMinutes', { hours, minutes });
+  }
+
+  function getRecordSessions(record) {
+    if (Array.isArray(record?.sessions) && record.sessions.length > 0) {
+      return record.sessions
+        .filter((session) => session && (session.clockIn || session.clockOut))
+        .map((session) => {
+          session.clockIn = session.clockIn || null;
+          session.clockOut = session.clockOut || null;
+          return session;
+        });
+    }
+
+    if (record?.clockIn || record?.clockOut) {
+      return [{ clockIn: record.clockIn || null, clockOut: record.clockOut || null }];
+    }
+
+    return [];
+  }
+
+  function getRecordClockIn(record) {
+    return getRecordSessions(record)[0]?.clockIn || null;
+  }
+
+  function getRecordClockOut(record) {
+    const completedSession = [...getRecordSessions(record)].reverse().find((session) => session.clockOut);
+    return completedSession?.clockOut || null;
+  }
+
+  function getActiveSession(record) {
+    return getRecordSessions(record).find((session) => session.clockIn && !session.clockOut) || null;
+  }
+
+  function getDurationMinutes(record) {
+    if (Number.isFinite(record?.manualDurationMinutes)) return record.manualDurationMinutes;
+
+    return getRecordSessions(record).reduce((total, session) => {
+      if (!session.clockIn || !session.clockOut) return total;
+      const diff = new Date(session.clockOut).getTime() - new Date(session.clockIn).getTime();
+      if (!Number.isFinite(diff) || diff <= 0) return total;
+      return total + Math.round(diff / 60000);
+    }, 0);
+  }
+
+  function formatDuration(recordOrClockIn, clockOut) {
+    if (typeof recordOrClockIn === 'object' && recordOrClockIn !== null) {
+      const sessions = getRecordSessions(recordOrClockIn);
+      if (sessions.length === 0) return '--';
+      return formatMinutesDuration(getDurationMinutes(recordOrClockIn));
+    }
+
+    if (!recordOrClockIn || !clockOut) return '--';
+    const diff = new Date(clockOut).getTime() - new Date(recordOrClockIn).getTime();
+    return formatMinutesDuration(Math.round(diff / 60000));
   }
 
   function formatSyncTime(isoString) {
@@ -342,13 +578,16 @@
     const now = new Date().toISOString();
     const clockIn = item.clockIn || null;
     const clockOut = item.clockOut || null;
+    const sessions = getRecordSessions(item);
     const deletedAt = item.deletedAt || null;
     const updatedAt = item.updatedAt || deletedAt || clockOut || clockIn || now;
 
     return {
       date: item.date,
-      clockIn: deletedAt ? null : clockIn,
-      clockOut: deletedAt ? null : clockOut,
+      clockIn: deletedAt ? null : (sessions[0]?.clockIn || clockIn),
+      clockOut: deletedAt ? null : (getRecordClockOut({ sessions }) || clockOut),
+      sessions: deletedAt ? [] : sessions,
+      manualDurationMinutes: Number.isFinite(item.manualDurationMinutes) ? item.manualDurationMinutes : null,
       createdAt: item.createdAt || clockIn || updatedAt,
       updatedAt,
       deletedAt
@@ -406,6 +645,8 @@
       date,
       clockIn: null,
       clockOut: null,
+      sessions: [],
+      manualDurationMinutes: null,
       createdAt: now,
       updatedAt: now,
       deletedAt: null
@@ -436,6 +677,203 @@
     toastTimer = window.setTimeout(() => {
       elements.toast.classList.remove('show');
     }, 2200);
+  }
+
+  function showAuthView(viewName) {
+    elements.authShell.hidden = false;
+    elements.appShell.hidden = true;
+    elements.setupAccountView.hidden = viewName !== 'setup';
+    elements.loginUsernameView.hidden = viewName !== 'username';
+    elements.loginPasswordView.hidden = viewName !== 'password';
+
+    window.setTimeout(() => {
+      if (viewName === 'setup') elements.setupUsername.focus();
+      if (viewName === 'username') elements.loginUsername.focus();
+      if (viewName === 'password') elements.loginPassword.focus();
+    }, 50);
+  }
+
+  function showApp() {
+    elements.authShell.hidden = true;
+    elements.appShell.hidden = false;
+    authenticated = true;
+    renderAccount();
+    renderManagerMode();
+    render();
+  }
+
+  function renderAccount() {
+    if (elements.accountName) {
+      const syncText = account?.syncCode ? ` · ${account.syncCode}` : '';
+      elements.accountName.textContent = account ? `${account.username}${syncText}` : '--';
+    }
+
+    if (account?.syncCode && cloudState.syncCode !== account.syncCode) {
+      cloudState.syncCode = account.syncCode;
+      elements.cloudCodeInput.value = account.syncCode;
+      saveCloudSettings();
+      prepareCloudIdentityForDisplay();
+    }
+  }
+
+  function renderManagerMode() {
+    elements.managerPanel.hidden = !managerModeOpen;
+    elements.managerUnlockForm.hidden = !managerModeOpen || managerUnlocked;
+    elements.managerActions.hidden = !managerModeOpen || !managerUnlocked;
+    elements.durationEditor.hidden = true;
+    elements.managerModeButton.classList.toggle('active', managerModeOpen);
+    elements.managerModeButton.setAttribute('aria-pressed', String(managerModeOpen));
+  }
+
+  function renderCloudDetails() {
+    elements.cloudDetails.hidden = !cloudDetailsOpen;
+    elements.cloudToggleButton.setAttribute('aria-expanded', String(cloudDetailsOpen));
+    elements.cloudArrow.classList.toggle('open', cloudDetailsOpen);
+  }
+
+  function toggleCloudDetails() {
+    cloudDetailsOpen = !cloudDetailsOpen;
+    renderCloudDetails();
+  }
+
+  function renderAuthGate() {
+    if (!account) {
+      showAuthView('setup');
+      return;
+    }
+
+    if (!authenticated) {
+      elements.loginUsername.value = account.username;
+      showAuthView('username');
+      return;
+    }
+
+    showApp();
+  }
+
+  function setupAccount(event) {
+    event.preventDefault();
+    const username = elements.setupUsername.value.trim();
+    const password = elements.setupPassword.value.trim();
+
+    if (!username) {
+      showToast(t('usernameRequired'));
+      return;
+    }
+
+    if (!isFourDigitPassword(password)) {
+      showToast(t('passwordMustFour'));
+      return;
+    }
+
+    const syncCode = cloudState.syncCode || generateSyncCode();
+    account = {
+      username,
+      password,
+      syncCode,
+      createdAt: new Date().toISOString()
+    };
+    cloudState.syncCode = syncCode;
+    elements.cloudCodeInput.value = syncCode;
+    saveAccount();
+    saveCloudSettings();
+    prepareCloudIdentityForDisplay();
+    showApp();
+    showToast(t('loginSuccess'));
+  }
+
+  function continueLogin(event) {
+    event.preventDefault();
+    if (!account) {
+      showToast(t('accountRequired'));
+      return;
+    }
+
+    if (elements.loginUsername.value.trim() !== account.username) {
+      showToast(t('usernameMismatch'));
+      return;
+    }
+
+    elements.loginPasswordEyebrow.textContent = account.username;
+    elements.loginPassword.value = '';
+    updatePinDots();
+    showAuthView('password');
+  }
+
+  function updatePinDots() {
+    const length = elements.loginPassword.value.length;
+    elements.pinDots.querySelectorAll('span').forEach((dot, index) => {
+      dot.classList.toggle('filled', index < length);
+    });
+  }
+
+  function tryPasswordLogin() {
+    updatePinDots();
+    if (elements.loginPassword.value.length < 4) return;
+
+    if (elements.loginPassword.value === account.password) {
+      showApp();
+      showToast(t('loginSuccess'));
+      return;
+    }
+
+    elements.loginPassword.value = '';
+    updatePinDots();
+    vibrate([40, 40, 40]);
+    showToast(t('passwordWrong'));
+  }
+
+  function signOut() {
+    account = null;
+    authenticated = false;
+    managerModeOpen = false;
+    managerUnlocked = false;
+    cloudState.syncCode = '';
+    elements.cloudCodeInput.value = '';
+    saveAccount();
+    saveCloudSettings();
+    updateConnectionStatus();
+    renderAuthGate();
+    showToast(t('signedOut'));
+  }
+
+  function requireManagerPassword() {
+    if (managerUnlocked) return true;
+    showToast(t('managerPasswordPrompt'));
+    if (managerModeOpen) elements.managerPasswordInput.focus();
+    return false;
+  }
+
+  function toggleManagerMode() {
+    if (managerModeOpen) {
+      managerModeOpen = false;
+      managerUnlocked = false;
+      elements.managerPasswordInput.value = '';
+      renderManagerMode();
+      showToast(t('managerModeOff'));
+      return;
+    }
+
+    managerModeOpen = true;
+    renderManagerMode();
+    showToast(t('managerModeOn'));
+    window.setTimeout(() => elements.managerPasswordInput.focus(), 50);
+  }
+
+  function unlockManagerMode(event) {
+    event.preventDefault();
+
+    if (elements.managerPasswordInput.value !== MANAGER_PASSWORD) {
+      elements.managerPasswordInput.value = '';
+      vibrate([40, 40, 40]);
+      showToast(t('managerPasswordWrong'));
+      return;
+    }
+
+    managerUnlocked = true;
+    elements.managerPasswordInput.value = '';
+    renderManagerMode();
+    showToast(t('managerUnlocked'));
   }
 
   function renderLanguageControls() {
@@ -748,25 +1186,26 @@
 
   function renderToday() {
     const record = getTodayRecord();
+    const activeSession = getActiveSession(record);
     elements.todayTitle.textContent = formatDateTitle(record.date);
-    elements.todayIn.textContent = formatTime(record.clockIn);
-    elements.todayOut.textContent = formatTime(record.clockOut);
-    elements.todayDuration.textContent = formatDuration(record.clockIn, record.clockOut);
+    elements.todayIn.textContent = formatTime(getRecordClockIn(record));
+    elements.todayOut.textContent = formatTime(getRecordClockOut(record));
+    elements.todayDuration.textContent = formatDuration(record);
 
     elements.todayStatus.classList.remove('working', 'done');
 
-    if (record.clockIn && record.clockOut) {
+    if (getRecordClockIn(record) && getRecordClockOut(record) && !activeSession) {
       elements.todayStatus.textContent = t('todayStatusDone');
       elements.todayStatus.classList.add('done');
-    } else if (record.clockIn) {
+    } else if (activeSession) {
       elements.todayStatus.textContent = t('todayStatusWorking');
       elements.todayStatus.classList.add('working');
     } else {
       elements.todayStatus.textContent = t('todayStatusPending');
     }
 
-    elements.clockInButton.disabled = Boolean(record.clockIn);
-    elements.clockOutButton.disabled = !record.clockIn || Boolean(record.clockOut);
+    elements.clockInButton.disabled = Boolean(activeSession) || Boolean(getRecordClockIn(record));
+    elements.clockOutButton.disabled = !activeSession;
   }
 
   function getVisibleRecords() {
@@ -788,12 +1227,12 @@
         <div>
           <div class="history-date">${formatHistoryDate(record.date)}</div>
           <div class="history-meta">${t('historyMeta', {
-            inTime: formatTime(record.clockIn),
-            outTime: formatTime(record.clockOut)
+            inTime: formatTime(getRecordClockIn(record)),
+            outTime: formatTime(getRecordClockOut(record))
           })}</div>
         </div>
         <div class="history-actions">
-          <div class="history-duration">${formatDuration(record.clockIn, record.clockOut)}</div>
+          <div class="history-duration">${formatDuration(record)}</div>
           <button class="delete-history-btn" data-date="${record.date}">${t('deleteButton')}</button>
         </div>
       </article>
@@ -810,18 +1249,22 @@
     renderHistory();
     renderInstallHint();
     renderCloudControls();
+    renderCloudDetails();
   }
 
   function clockIn() {
     const now = new Date().toISOString();
     const record = getTodayRecord(true);
 
-    if (record.clockIn) {
+    if (getRecordClockIn(record) || getActiveSession(record)) {
       showToast(t('alreadyClockedIn'));
       return;
     }
 
     record.clockIn = now;
+    record.clockOut = null;
+    record.sessions = [{ clockIn: now, clockOut: null }];
+    record.manualDurationMinutes = null;
     record.updatedAt = now;
     record.deletedAt = null;
     persistRecords();
@@ -833,17 +1276,15 @@
   function clockOut() {
     const now = new Date().toISOString();
     const record = getTodayRecord(false);
+    const activeSession = getActiveSession(record);
 
-    if (!record.clockIn) {
+    if (!activeSession) {
       showToast(t('clockInFirst'));
       return;
     }
 
-    if (record.clockOut) {
-      showToast(t('alreadyClockedOut'));
-      return;
-    }
-
+    activeSession.clockOut = now;
+    record.clockIn = getRecordClockIn(record);
     record.clockOut = now;
     record.updatedAt = now;
     record.deletedAt = null;
@@ -860,6 +1301,8 @@
     if (record) {
       record.clockIn = null;
       record.clockOut = null;
+      record.sessions = [];
+      record.manualDurationMinutes = null;
       record.updatedAt = now;
       record.deletedAt = now;
     }
@@ -867,6 +1310,100 @@
     persistRecords();
     render();
     showToast(t('recordDeleted'));
+  }
+
+  function resetClockInToday() {
+    if (!requireManagerPassword()) return;
+
+    const now = new Date().toISOString();
+    const record = getTodayRecord(true);
+    const sessions = getRecordSessions(record);
+    const activeSession = sessions.find((session) => session.clockIn && !session.clockOut);
+
+    if (activeSession) {
+      activeSession.clockOut = now;
+    }
+
+    sessions.push({ clockIn: now, clockOut: null });
+    record.sessions = sessions;
+    record.clockIn = sessions[0]?.clockIn || now;
+    record.clockOut = getRecordClockOut(record);
+    record.manualDurationMinutes = null;
+    record.updatedAt = now;
+    record.deletedAt = null;
+    persistRecords();
+    render();
+    showToast(t('resetClockInSuccess'));
+  }
+
+  function openDurationEditor() {
+    if (!requireManagerPassword()) return;
+
+    const record = getTodayRecord(true);
+    const sessions = getRecordSessions(record);
+    elements.workStartInput.value = formatInputTime(sessions[0]?.clockIn || record.clockIn);
+    elements.workEndInput.value = formatInputTime(sessions[0]?.clockOut || record.clockOut);
+    elements.workStartTwoInput.value = formatInputTime(sessions[1]?.clockIn);
+    elements.workEndTwoInput.value = formatInputTime(sessions[1]?.clockOut);
+    elements.durationEditor.hidden = false;
+    elements.workStartInput.focus();
+  }
+
+  function saveManualDuration(event) {
+    event.preventDefault();
+
+    const record = getTodayRecord(true);
+    const dateKey = record.date;
+    const firstStart = elements.workStartInput.value;
+    const firstEnd = elements.workEndInput.value;
+    const secondStart = elements.workStartTwoInput.value;
+    const secondEnd = elements.workEndTwoInput.value;
+
+    if (!firstStart || !firstEnd) {
+      showToast(t('invalidWorkTimeRange'));
+      return;
+    }
+
+    if ((secondStart && !secondEnd) || (!secondStart && secondEnd)) {
+      showToast(t('partialWorkTimeRange'));
+      return;
+    }
+
+    const sessions = [
+      {
+        clockIn: timeInputToIso(dateKey, firstStart),
+        clockOut: timeInputToIso(dateKey, firstEnd)
+      }
+    ];
+
+    if (secondStart && secondEnd) {
+      sessions.push({
+        clockIn: timeInputToIso(dateKey, secondStart),
+        clockOut: timeInputToIso(dateKey, secondEnd)
+      });
+    }
+
+    const invalidSession = sessions.some((session) => {
+      const start = new Date(session.clockIn).getTime();
+      const end = new Date(session.clockOut).getTime();
+      return !Number.isFinite(start) || !Number.isFinite(end) || end <= start;
+    });
+
+    if (invalidSession) {
+      showToast(t('invalidWorkTimeRange'));
+      return;
+    }
+
+    record.sessions = sessions;
+    record.clockIn = sessions[0].clockIn;
+    record.clockOut = sessions[sessions.length - 1].clockOut;
+    record.manualDurationMinutes = null;
+    record.deletedAt = null;
+    record.updatedAt = new Date().toISOString();
+    persistRecords();
+    render();
+    elements.durationEditor.hidden = true;
+    showToast(t('durationSaved'));
   }
 
   function csvEscape(value) {
@@ -880,9 +1417,9 @@
       [t('csvDateHeader'), t('csvClockInHeader'), t('csvClockOutHeader'), t('csvDurationHeader')],
       ...getVisibleRecords().map((record) => [
         record.date,
-        formatTime(record.clockIn),
-        formatTime(record.clockOut),
-        formatDuration(record.clockIn, record.clockOut)
+        formatTime(getRecordClockIn(record)),
+        formatTime(getRecordClockOut(record)),
+        formatDuration(record)
       ])
     ];
 
@@ -1109,6 +1646,11 @@
     cloudState.lastSyncedAt = null;
     cloudState.error = '';
     elements.cloudCodeInput.value = syncCode;
+    if (account) {
+      account.syncCode = syncCode;
+      saveAccount();
+      renderAccount();
+    }
     saveCloudSettings();
     await prepareCloudIdentityForDisplay();
     updateConnectionStatus();
@@ -1145,6 +1687,11 @@
     cloudState.cryptoKey = null;
     cloudState.lastSyncedAt = null;
     cloudState.error = '';
+    if (account) {
+      account.syncCode = syncCode;
+      saveAccount();
+      renderAccount();
+    }
     saveCloudSettings();
     setVisibleSyncCode(syncCode);
     await prepareCloudIdentityForDisplay();
@@ -1159,6 +1706,11 @@
     cloudState.lastSyncedAt = null;
     cloudState.error = '';
     elements.cloudCodeInput.value = '';
+    if (account) {
+      account.syncCode = '';
+      saveAccount();
+      renderAccount();
+    }
     saveCloudSettings();
     updateConnectionStatus();
     showToast(t('cloudDisconnected'));
@@ -1210,7 +1762,35 @@
 
   elements.clockInButton.addEventListener('click', clockIn);
   elements.clockOutButton.addEventListener('click', clockOut);
+  elements.setupAccountForm.addEventListener('submit', setupAccount);
+  elements.loginUsernameForm.addEventListener('submit', continueLogin);
+  elements.loginPassword.addEventListener('input', tryPasswordLogin);
+  document.querySelectorAll('[data-pin]').forEach((button) => {
+    button.addEventListener('click', () => {
+      if (elements.loginPassword.value.length >= 4) return;
+      elements.loginPassword.value += button.dataset.pin;
+      tryPasswordLogin();
+    });
+  });
+  elements.pinBackButton.addEventListener('click', () => {
+    elements.loginPassword.value = elements.loginPassword.value.slice(0, -1);
+    updatePinDots();
+  });
+  elements.pinClearButton.addEventListener('click', () => {
+    elements.loginPassword.value = '';
+    updatePinDots();
+  });
+  elements.backToUsernameButton.addEventListener('click', () => {
+    showAuthView('username');
+  });
+  elements.signOutButton.addEventListener('click', signOut);
+  elements.managerModeButton.addEventListener('click', toggleManagerMode);
+  elements.managerUnlockForm.addEventListener('submit', unlockManagerMode);
+  elements.resetClockInButton.addEventListener('click', resetClockInToday);
+  elements.editDurationButton.addEventListener('click', openDurationEditor);
+  elements.durationEditor.addEventListener('submit', saveManualDuration);
   elements.exportButton.addEventListener('click', exportCSV);
+  elements.cloudToggleButton.addEventListener('click', toggleCloudDetails);
   elements.cloudCreateButton.addEventListener('click', createSyncCode);
   elements.copySyncCodeButton.addEventListener('click', copyCurrentSyncCode);
   elements.cloudConnectButton.addEventListener('click', connectCloud);
@@ -1248,7 +1828,7 @@
   renderStaticText();
   updateConnectionStatus();
   updateClock();
-  render();
+  renderAuthGate();
   bootCloudSync();
   setupServiceWorker();
 

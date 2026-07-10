@@ -85,6 +85,126 @@ button:disabled {
   padding: calc(18px + var(--safe-top)) 18px calc(24px + var(--safe-bottom));
 }
 
+.auth-shell {
+  display: grid;
+  min-height: 100dvh;
+  place-items: center;
+  padding: calc(24px + var(--safe-top)) 18px calc(24px + var(--safe-bottom));
+}
+
+.auth-card {
+  width: min(100%, 430px);
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-large);
+  background: var(--card);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+}
+
+.auth-copy,
+.manager-copy {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.auth-form {
+  display: grid;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.field-label {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 720;
+}
+
+.auth-input {
+  width: 100%;
+  min-height: 54px;
+  padding: 0 15px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  color: var(--text);
+  background: var(--card-strong);
+  font-size: 18px;
+  outline: none;
+}
+
+.auth-input:focus {
+  border-color: rgba(10, 132, 255, 0.72);
+}
+
+.pin-input {
+  letter-spacing: 0.2em;
+  text-align: center;
+}
+
+.auth-submit {
+  margin-top: 8px;
+}
+
+.phone-login-card {
+  text-align: center;
+}
+
+.pin-dots {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin: 26px 0 28px;
+}
+
+.pin-dots span {
+  width: 13px;
+  height: 13px;
+  border: 1px solid var(--muted);
+  border-radius: 999px;
+}
+
+.pin-dots span.filled {
+  border-color: var(--text);
+  background: var(--text);
+}
+
+.hidden-pin-input {
+  position: fixed;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.number-pad {
+  display: grid;
+  grid-template-columns: repeat(3, 72px);
+  justify-content: center;
+  gap: 12px;
+}
+
+.number-pad button {
+  width: 72px;
+  height: 58px;
+  border-radius: 999px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.58);
+  font-size: 24px;
+  font-weight: 760;
+}
+
+.number-pad .pad-action {
+  color: var(--blue-strong);
+  font-size: 15px;
+}
+
+.auth-back-button {
+  margin-top: 18px;
+}
+
 .topbar {
   display: flex;
   align-items: center;
@@ -155,7 +275,8 @@ h2 {
 }
 
 .clock-pill,
-.status-badge {
+.status-badge,
+.manager-mode-button {
   flex: none;
   border: 1px solid var(--line);
   border-radius: 999px;
@@ -167,7 +288,8 @@ h2 {
 @media (prefers-color-scheme: dark) {
   .language-switch,
   .clock-pill,
-  .status-badge {
+  .status-badge,
+  .manager-mode-button {
     background: rgba(255, 255, 255, 0.07);
   }
 }
@@ -180,6 +302,19 @@ h2 {
   font-size: 18px;
   font-weight: 800;
   letter-spacing: -0.02em;
+}
+
+.manager-mode-button {
+  width: 38px;
+  height: 38px;
+  color: var(--muted);
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.manager-mode-button.active {
+  color: #ffffff;
+  background: var(--green);
 }
 
 .card {
@@ -275,6 +410,44 @@ h2 {
   gap: 12px;
 }
 
+.manager-panel {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(52, 199, 89, 0.08);
+}
+
+.manager-unlock,
+.manager-actions,
+.duration-editor {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.manager-unlock {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.duration-editor {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.duration-editor label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 720;
+}
+
+.duration-editor button {
+  grid-column: 1 / -1;
+}
+
 .primary-button,
 .secondary-button {
   min-height: 58px;
@@ -342,13 +515,25 @@ h2 {
 .cloud-sync {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 14px;
+  gap: 0;
   margin-bottom: 14px;
-  padding: 16px;
   border: 1px solid var(--line);
   border-radius: 18px;
   background: rgba(10, 132, 255, 0.06);
   overflow: hidden;
+}
+
+.cloud-toggle {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+  color: var(--text);
+  background: transparent;
+  text-align: left;
 }
 
 .cloud-sync-status {
@@ -356,6 +541,49 @@ h2 {
   min-width: 0;
   align-items: center;
   gap: 10px;
+}
+
+.cloud-sync-status > span:last-child {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.cloud-arrow {
+  flex: none;
+  color: var(--blue-strong);
+  font-size: 22px;
+  font-weight: 800;
+  transition: transform 160ms ease;
+}
+
+.cloud-arrow.open {
+  transform: rotate(180deg);
+}
+
+.cloud-details {
+  display: grid;
+  gap: 14px;
+  padding: 0 16px 16px;
+}
+
+.account-strip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--card-strong);
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.account-strip strong {
+  min-width: 0;
+  color: var(--text);
+  overflow-wrap: anywhere;
 }
 
 .cloud-dot {
@@ -456,6 +684,7 @@ h2 {
 .history-list {
   display: grid;
   gap: 10px;
+  margin-bottom: 14px;
 }
 
 .history-item {
@@ -575,6 +804,11 @@ h2 {
   .action-row {
     grid-template-columns: 1fr;
   }
+
+  .manager-actions,
+  .duration-editor {
+    grid-template-columns: 1fr;
+  }
 }
 
 .history-actions {
@@ -598,6 +832,10 @@ h2 {
 }
 
 .hidden {
+  display: none !important;
+}
+
+[hidden] {
   display: none !important;
 }
 
@@ -633,6 +871,10 @@ h2 {
   }
 
   .cloud-destination {
+    grid-template-columns: 1fr;
+  }
+
+  .account-strip {
     grid-template-columns: 1fr;
   }
 

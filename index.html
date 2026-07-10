@@ -20,7 +20,55 @@
     <div class="noscript">这个打卡应用需要启用 JavaScript 才能运行。 / This work clock app needs JavaScript to run.</div>
   </noscript>
 
-  <div class="app-shell">
+  <section class="auth-shell" id="authShell" hidden aria-live="polite">
+    <div class="auth-card" id="setupAccountView" hidden>
+      <p class="eyebrow" data-i18n="setupEyebrow">第一次使用</p>
+      <h1 data-i18n="setupTitle">设置账号</h1>
+      <p class="auth-copy" data-i18n="setupCopy">输入用户名和 4 位数字密码。同步码会自动和这个用户名连接。</p>
+      <form class="auth-form" id="setupAccountForm">
+        <label class="field-label" for="setupUsername" data-i18n="usernameLabel">用户名</label>
+        <input class="auth-input" id="setupUsername" type="text" autocomplete="username" placeholder="Jocelyn" data-i18n-placeholder="usernamePlaceholder" />
+        <label class="field-label" for="setupPassword" data-i18n="passwordLabel">4 位数字密码</label>
+        <input class="auth-input pin-input" id="setupPassword" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="new-password" placeholder="••••" data-i18n-placeholder="pinPlaceholder" />
+        <button class="primary-button auth-submit" type="submit" data-i18n="setupButton">创建账号</button>
+      </form>
+    </div>
+
+    <div class="auth-card" id="loginUsernameView" hidden>
+      <p class="eyebrow" data-i18n="loginEyebrow">欢迎回来</p>
+      <h1 data-i18n="loginTitle">用户名</h1>
+      <form class="auth-form" id="loginUsernameForm">
+        <input class="auth-input" id="loginUsername" type="text" autocomplete="username" placeholder="Jocelyn" data-i18n-placeholder="usernamePlaceholder" />
+        <button class="primary-button auth-submit" type="submit" data-i18n="nextButton">下一步</button>
+      </form>
+    </div>
+
+    <div class="auth-card phone-login-card" id="loginPasswordView" hidden>
+      <p class="eyebrow" id="loginPasswordEyebrow">Jocelyn</p>
+      <h1 data-i18n="enterPasswordTitle">输入密码</h1>
+      <div class="pin-dots" id="pinDots" aria-hidden="true">
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <input class="hidden-pin-input" id="loginPassword" type="password" inputmode="numeric" maxlength="4" autocomplete="current-password" aria-label="4 digit Password" data-i18n-aria-label="passwordLabel" />
+      <div class="number-pad" aria-label="Password keypad">
+        <button type="button" data-pin="1">1</button>
+        <button type="button" data-pin="2">2</button>
+        <button type="button" data-pin="3">3</button>
+        <button type="button" data-pin="4">4</button>
+        <button type="button" data-pin="5">5</button>
+        <button type="button" data-pin="6">6</button>
+        <button type="button" data-pin="7">7</button>
+        <button type="button" data-pin="8">8</button>
+        <button type="button" data-pin="9">9</button>
+        <button class="pad-action" type="button" id="pinBackButton" data-i18n-aria-label="backspaceButton" aria-label="Delete">⌫</button>
+        <button type="button" data-pin="0">0</button>
+        <button class="pad-action" type="button" id="pinClearButton" data-i18n="clearButton">清除</button>
+      </div>
+      <button class="text-button auth-back-button" id="backToUsernameButton" type="button" data-i18n="backButton">返回</button>
+    </div>
+  </section>
+
+  <div class="app-shell" id="appShell" hidden>
     <header class="topbar" aria-label="应用顶部信息" data-i18n-aria-label="topbarAria">
       <div>
         <p class="eyebrow" id="connectionStatus">本地离线存储</p>
@@ -34,6 +82,7 @@
         <div class="clock-pill" aria-live="polite">
           <span id="currentTime">--:--</span>
         </div>
+        <button class="manager-mode-button" id="managerModeButton" type="button" data-i18n-aria-label="managerModeButton" aria-label="老赖操控">⚙</button>
       </div>
     </header>
 
@@ -73,6 +122,40 @@
           </button>
         </div>
 
+        <div class="manager-panel" id="managerPanel" hidden>
+          <div>
+            <p class="eyebrow" data-i18n="managerEyebrow">老赖操控</p>
+            <p class="manager-copy" data-i18n="managerCopy">受保护操作需要老赖操控密码。</p>
+          </div>
+          <form class="manager-unlock" id="managerUnlockForm">
+            <input class="cloud-input" id="managerPasswordInput" type="password" inputmode="numeric" autocomplete="off" placeholder="密码" data-i18n-placeholder="managerPasswordPlaceholder" aria-label="老赖操控密码" data-i18n-aria-label="managerPasswordLabel" />
+            <button class="text-button" type="submit" data-i18n="managerUnlockButton">开启</button>
+          </form>
+          <div class="manager-actions" id="managerActions" hidden>
+            <button class="text-button" id="resetClockInButton" type="button" data-i18n="resetClockInButton">重新上班</button>
+            <button class="text-button" id="editDurationButton" type="button" data-i18n="editDurationButton">修改工时</button>
+          </div>
+          <form class="duration-editor" id="durationEditor" hidden>
+            <label>
+              <span data-i18n="workStartLabel">开始</span>
+              <input class="cloud-input" id="workStartInput" type="time" required />
+            </label>
+            <label>
+              <span data-i18n="workEndLabel">结束</span>
+              <input class="cloud-input" id="workEndInput" type="time" required />
+            </label>
+            <label>
+              <span data-i18n="workStartTwoLabel">第二段开始</span>
+              <input class="cloud-input" id="workStartTwoInput" type="time" />
+            </label>
+            <label>
+              <span data-i18n="workEndTwoLabel">第二段结束</span>
+              <input class="cloud-input" id="workEndTwoInput" type="time" />
+            </label>
+            <button class="text-button" type="submit" data-i18n="saveDurationButton">保存</button>
+          </form>
+        </div>
+
         <p class="hint" id="installHint" data-i18n="installHint">在 iPhone Safari 中点击“分享” → “添加到主屏幕”，即可像 App 一样使用。</p>
       </section>
 
@@ -88,29 +171,40 @@
           </div>
         </div>
 
+        <div class="history-list" id="historyList" aria-live="polite"></div>
+
         <div class="cloud-sync" id="cloudSyncPanel">
-          <div class="cloud-sync-status">
-            <span class="cloud-dot" id="cloudDot" aria-hidden="true"></span>
-            <div>
-              <div class="cloud-title" data-i18n="cloudTitle">云端同步</div>
-              <div class="cloud-meta" id="cloudStatus">未配置</div>
+          <button class="cloud-toggle" id="cloudToggleButton" type="button" aria-expanded="false">
+            <span class="cloud-sync-status">
+              <span class="cloud-dot" id="cloudDot" aria-hidden="true"></span>
+              <span>
+                <span class="cloud-title" data-i18n="cloudTitle">云端同步</span>
+                <span class="cloud-meta" id="cloudStatus">未配置</span>
+              </span>
+            </span>
+            <span class="cloud-arrow" id="cloudArrow" aria-hidden="true">⌄</span>
+          </button>
+          <div class="cloud-details" id="cloudDetails" hidden>
+            <div class="account-strip">
+              <span data-i18n="accountLabel">账号</span>
+              <strong id="accountName">--</strong>
+              <button class="text-button danger-text-button" id="signOutButton" type="button" data-i18n="signOutButton">登出</button>
             </div>
-          </div>
-          <div class="cloud-form">
-            <input class="cloud-input" id="cloudCodeInput" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="同步码" aria-label="云端同步码" data-i18n-placeholder="syncCodePlaceholder" data-i18n-aria-label="syncCodeAria" />
-            <button class="text-button" id="cloudCreateButton" type="button" data-i18n="createSyncCodeButton">生成同步码</button>
-            <button id="copySyncCodeButton" class="text-button" type="button" data-i18n="copySyncCodeButton">复制</button>
-            <button class="text-button" id="cloudConnectButton" type="button" data-i18n="connectButton">连接</button>
-            <button class="text-button danger-text-button" id="cloudDisconnectButton" type="button" hidden data-i18n="disconnectButton">断开</button>
-          </div>
-          <div class="cloud-destination" id="cloudDestination">
-            <span data-i18n="cloudDestinationLabel">同步位置</span>
-            <strong id="cloudDestinationText">--</strong>
-            <a class="cloud-console-link" id="cloudConsoleLink" href="#" target="_blank" rel="noopener" hidden data-i18n="cloudConsoleLink">查看数据</a>
+            <div class="cloud-form">
+              <input class="cloud-input" id="cloudCodeInput" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="同步码" aria-label="云端同步码" data-i18n-placeholder="syncCodePlaceholder" data-i18n-aria-label="syncCodeAria" />
+              <button class="text-button" id="cloudCreateButton" type="button" data-i18n="createSyncCodeButton">生成同步码</button>
+              <button id="copySyncCodeButton" class="text-button" type="button" data-i18n="copySyncCodeButton">复制</button>
+              <button class="text-button" id="cloudConnectButton" type="button" data-i18n="connectButton">连接</button>
+              <button class="text-button danger-text-button" id="cloudDisconnectButton" type="button" hidden data-i18n="disconnectButton">断开</button>
+            </div>
+            <div class="cloud-destination" id="cloudDestination">
+              <span data-i18n="cloudDestinationLabel">同步位置</span>
+              <strong id="cloudDestinationText">--</strong>
+              <a class="cloud-console-link" id="cloudConsoleLink" href="#" target="_blank" rel="noopener" hidden data-i18n="cloudConsoleLink">查看数据</a>
+            </div>
           </div>
         </div>
 
-        <div class="history-list" id="historyList" aria-live="polite"></div>
       </section>
     </main>
   </div>
